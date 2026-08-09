@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sistema Operativo · Quinta Majam</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#F4EFE6;padding-bottom:60px}
+#hdr{background:#1F3A5F;color:#fff;padding:10px 12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.hrow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+#fi{background:#FCE6B0;border:2px solid #8A6D3B;border-radius:4px;padding:5px 10px;font-size:13px;font-weight:700;color:#8A5A00;font-family:Arial}
+.btn{border:none;border-radius:4px;padding:8px 14px;font-weight:700;font-size:12px;cursor:pointer;color:#fff;font-family:Arial}
+.bsv{background:#8A6D3B}.bsv.ok{background:#1E6B33}.bxl{background:#217346}
+#per{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.pi{display:flex;align-items:center;gap:4px}
+.pi span{font-size:8px;opacity:.7}
+.pi input{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:3px;padding:2px 8px;font-size:11px;color:#fff;width:80px;font-family:Arial}
+.pi.mayra input{background:rgba(252,230,176,.3);border-color:#FCE6B0}
+#tabs{display:flex;gap:3px;flex-wrap:wrap}
+.tab{background:rgba(255,255,255,.1);color:#fff;border:2px solid transparent;border-radius:4px;padding:4px 9px;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial}
+.tab.on{border-color:rgba(255,255,255,.5)}
+#main{padding:10px 12px;max-width:1050px;margin:0 auto}
+.sh{padding:6px 12px;font-weight:700;font-size:12px;border-radius:4px;margin:10px 0 6px;color:#fff}
+.card{background:#fff;border:1px solid #ddd;border-radius:6px;padding:10px;margin-bottom:8px}
+.card.a{background:#F4EFE6}.card.r{background:#F8C9C4;border-color:#f0c0c0}
+.card.blu{background:#EBF5FB;border:2px solid #1A4A7A}
+.card.ora{background:#FFF3E0;border:2px solid #FF8C00}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.f{display:flex;flex-direction:column;gap:2px;flex:1;min-width:88px}
+.fl{font-size:8px;font-weight:700;color:#8A6D3B;letter-spacing:.8px;text-transform:uppercase}
+input[type=text],input[type=number],input[type=date],input[type=time],select{border:1px solid #ccc;border-radius:3px;padding:4px 6px;font-size:11px;width:100%;font-family:Arial;background:#fff}
+.gs{background:#C9E3C6;padding:4px 8px;border-radius:3px;font-weight:700;color:#1E6B33;font-size:12px;text-align:center;margin-top:2px}
+.tb{padding:7px 14px;border-radius:4px;font-weight:700;text-align:right;font-size:13px;color:#fff;margin-top:6px}
+.nc{width:22px;height:22px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:#fff}
+.ci{display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid #eee;align-items:center}
+.ct{display:flex;justify-content:space-between;padding:14px 16px;background:#1F3A5F;border-radius:0 0 4px 4px;color:#fff}
+.eq-i{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid #ccc;border-radius:4px;padding:4px 7px;cursor:pointer;font-size:10px;user-select:none}
+.eq-i.on{background:#C9E3C6;border-color:#1E6B33;font-weight:700;color:#1E6B33}
+.mixto-box{background:#EBF5FB;border:1px solid #1A4A7A;border-radius:4px;padding:8px 10px;margin-top:6px}
+.checkout-box{background:#FFF3E0;border:2px solid #FF8C00;border-radius:4px;padding:8px 10px;margin-top:6px}
+.fidel-box{background:#F3E5F5;border:1px solid #7B1FA2;border-radius:4px;padding:8px 10px;margin-top:6px}
+.fidel-hdr{font-size:9px;font-weight:700;color:#7B1FA2;margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase}
+.sync-box{background:#EAF7EE;border:1px solid #1E6B33;border-radius:4px;padding:8px 10px;margin-bottom:6px}
+.autofill-box{background:#FFF8E1;border:2px solid #F9A825;border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:10px;color:#E65100}
+.tip{background:#FCE6B0;border:1px solid #8A6D3B;border-radius:4px;padding:7px 10px;margin-bottom:7px;font-size:10px;color:#8A5A00;font-weight:600}
+.est-row{display:grid;grid-template-columns:1fr 120px 100px 36px;gap:6px;align-items:center;padding:5px 8px;border-radius:3px;margin-bottom:3px}
+.per-btn{background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:4px;padding:5px 10px;font-weight:700;font-size:11px;cursor:pointer;font-family:Arial}
+.per-btn.on{background:#fff;color:#1F3A5F}
+#pass-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9999;display:none;align-items:center;justify-content:center}
+#status{position:fixed;bottom:0;left:0;right:0;padding:5px;font-size:10px;text-align:center;z-index:200;color:#fff;background:#8A5A00}
+#status.ok{background:#1E6B33}
+.tbl{width:100%;border-collapse:collapse;font-size:10px}
+.tbl th{background:#1F3A5F;color:#fff;padding:5px 8px;text-align:left;white-space:nowrap}
+.tbl td{padding:5px 8px;border-bottom:1px solid #eee}
+.tbl tr:nth-child(even) td{background:#F4EFE6}
+</style>
+</head>
+<body>
+<!-- MODAL CONTRASEÑA -->
+<div id="pass-modal">
+  <div style="background:#fff;border-radius:10px;padding:24px;width:300px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.4)">
+    <div style="font-size:36px;margin-bottom:8px">🔒</div>
+    <div style="font-size:15px;font-weight:700;color:#1F3A5F;margin-bottom:6px">Acceso restringido</div>
+    <div style="font-size:11px;color:#777;margin-bottom:14px">Solo Gerencia puede ver esta sección</div>
+    <input id="pass-inp" type="password" placeholder="Contraseña..." style="width:100%;border:2px solid #1F3A5F;border-radius:6px;padding:10px;font-size:14px;text-align:center;margin-bottom:8px;font-family:Arial"/>
+    <div id="pass-err" style="color:#9C1F12;font-size:10px;font-weight:700;min-height:14px;margin-bottom:8px"></div>
+    <div style="display:flex;gap:8px">
+      <button onclick="cerrarModal()" style="flex:1;background:#eee;color:#555;border:none;border-radius:6px;padding:10px;font-weight:700;cursor:pointer;font-family:Arial">Cancelar</button>
+      <button onclick="verificarPass()" style="flex:1;background:#1F3A5F;color:#fff;border:none;border-radius:6px;padding:10px;font-weight:700;cursor:pointer;font-family:Arial">Entrar →</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL MIGRACIÓN -->
+<div id="migrar-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:9998;display:none;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;padding:28px;width:320px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.4)">
+    <div style="font-size:36px;margin-bottom:10px">☁️</div>
+    <div style="font-size:15px;font-weight:700;color:#1F3A5F;margin-bottom:8px">Migrar datos a Supabase</div>
+    <div style="font-size:11px;color:#777;margin-bottom:16px">Esto sube toda la información guardada en este dispositivo a la nube para que todos puedan verla.</div>
+    <div id="migrar-prog" style="font-size:11px;color:#1E6B33;font-weight:700;min-height:16px;margin-bottom:14px"></div>
+    <div style="display:flex;gap:8px">
+      <button onclick="document.getElementById('migrar-modal').style.display='none'" style="flex:1;background:#eee;color:#555;border:none;border-radius:6px;padding:10px;font-weight:700;cursor:pointer;font-family:Arial">Cancelar</button>
+      <button onclick="migrarASupabase()" style="flex:1;background:#1E6B33;color:#fff;border:none;border-radius:6px;padding:10px;font-weight:700;cursor:pointer;font-family:Arial">📤 Migrar</button>
+    </div>
+  </div>
+</div>
+<div id="hdr">
+  <div class="hrow">
+    <div><div style="font-size:14px;font-weight:700">📋 QUINTA MAJAM · SISTEMA OPERATIVO DIARIO</div><div style="font-size:9px;opacity:.6">Datos guardados por fecha</div></div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <div><div style="font-size:8px;opacity:.6;margin-bottom:2px">FECHA DEL DÍA</div><input type="date" id="fi" onchange="cambiarFecha()"/></div>
+      <div style="background:rgba(255,255,255,.1);padding:5px 10px;border-radius:4px;text-align:center"><div id="dn" style="font-size:12px;font-weight:700">—</div><div id="dm" style="font-size:9px;opacity:.6">—</div></div>
+      <button class="btn bsv" id="bs" onclick="guardar()">💾 Guardar</button>
+      <button class="btn bxl" onclick="exportarExcel()">📊 Excel</button>
+      <button class="btn" onclick="document.getElementById('migrar-modal').style.display='flex'" style="background:#1E6B33" title="Sincronizar con la nube">☁️ Nube</button>
+    </div>
+  </div>
+  <div id="per">
+    <div class="pi"><span>BARRETO:</span><input id="p-montse" placeholder="Nombre" oninput="DD.personal.montse=this.value;dirty=true"/></div>
+    <div class="pi"><span>RAÚL:</span><input id="p-raul" placeholder="Nombre" oninput="DD.personal.raul=this.value;dirty=true"/></div>
+    <div class="pi"><span>BRENDA:</span><input id="p-brenda" placeholder="Nombre" oninput="DD.personal.brenda=this.value;dirty=true"/></div>
+    <div class="pi"><span>LETY:</span><input id="p-lety" placeholder="Nombre" oninput="DD.personal.lety=this.value;dirty=true"/></div>
+    <div class="pi mayra"><span>MAYRA:</span><input id="p-mayra" placeholder="Nombre" oninput="DD.personal.mayra=this.value;dirty=true"/></div>
+  </div>
+  <div id="tabs">
+    <button class="tab on" onclick="tab(this,'g')" style="background:#5A1A8A">👥 Gestión</button>
+    <button class="tab" onclick="tab(this,'o')">🏠 Ocupación</button>
+    <button class="tab" onclick="tab(this,'d')">🎫 Day Pass</button>
+    <button class="tab" onclick="tab(this,'c')">🛒 El Estanquillo</button>
+    <button class="tab" onclick="tab(this,'e')">⛺ Equipo</button>
+    <button class="tab" onclick="tab(this,'i')">⚠️ Incidencias</button>
+    <button class="tab" onclick="tab(this,'k')">💰 Corte</button>
+    <button class="tab" onclick="tab(this,'r')" style="background:#1A5276">📊 Resumen</button>
+  </div>
+</div>
+<div id="main"></div>
+<div id="status">Selecciona una fecha para comenzar</div>
+
+<script>
+
+// ══ SUPABASE ══
+const SURL='https://jpsnhyzcbavvcmlabdpb.supabase.co';
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impwc25oeXpjYmF2dmNtbGFiZHBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMDY1OTAsImV4cCI6MjEwMTc4MjU5MH0.9ASLqB77vpeZv9y4poL9VntqzcExsVypgGp5M6I4aeM';
+const SH={'apikey':SKEY,'Authorization':'Bearer '+SKEY,'Content-Type':'application/json'};
+
+async function guardarSupa(f,data){
+  try{
+    await fetch(SURL+'/rest/v1/operaciones',{
+      method:'POST',
+      headers:{...SH,'Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify({fecha:f,datos:data,actualizado_en:new Date().toISOString()})
+    });
+  }catch(e){console.warn('Supabase save error:',e);}
+}
+
+async function cargarSupa(f){
+  try{
+    const r=await fetch(SURL+'/rest/v1/operaciones?fecha=eq.'+f+'&select=datos',{headers:SH});
+    const d=await r.json();
+    if(d&&d[0]&&d[0].datos){
+      localStorage.setItem('qm_'+f,JSON.stringify(d[0].datos));
+      return d[0].datos;
+    }
+  }catch(e){console.warn('Supabase load error:',e);}
+  return null;
+}
+
+async function getAllKeysSupa(){
+  try{
+    const r=await fetch(SURL+'/rest/v1/operaciones?select=fecha',{headers:SH});
+    const d=await r.json();
+    if(Array.isArray(d))d.forEach(row=>{
+      // Solo marcar que existe, no sobreescribir cache local
+      if(!localStorage.getItem('qm_'+row.fecha))localStorage.setItem('qm_sync_'+row.fecha,'1');
+    });
+    return Array.isArray(d)?d.map(r=>r.fecha):[];
+  }catch(e){return [];}
+}
+
+async function sincronizarDesdeSupa(f){
+  const data=await cargarSupa(f);
+  if(data){
+    const base=mkDia();
+    DD=Object.assign({},base,data,{
+      personal:Object.assign({},base.personal,data.personal||{}),
+      cabanas:(data.cabanas||base.cabanas).map((c,i)=>Object.assign({},base.cabanas[i],c)),
+      reservas:(data.reservas||base.reservas).map((r,i)=>Object.assign({},base.reservas[i],r)),
+      camping:(data.camping||base.camping).map((c,i)=>Object.assign({},base.camping[i],c)),
+      tiendita:normEst(data.tiendita),cafe:normEst(data.cafe),
+      equipo:(data.equipo||base.equipo).map((e,i)=>Object.assign({},base.equipo[i],e)),
+      incidencias:(data.incidencias||base.incidencias).map((inc,i)=>Object.assign({},base.incidencias[i],inc)),
+    });
+    return true;
+  }
+  return false;
+}
+
+async function migrarASupabase(){
+  const prog=document.getElementById('migrar-prog');
+  if(prog)prog.textContent='Buscando datos locales...';
+  const keys=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('qm_')&&!k.startsWith('qm_sync_'))keys.push(k);
+  }
+  if(!keys.length){if(prog)prog.textContent='⚠️ No hay datos locales para migrar';return;}
+  let ok=0;
+  for(const key of keys){
+    const f=key.slice(3);
+    try{
+      const data=JSON.parse(localStorage.getItem(key));
+      await guardarSupa(f,data);
+      ok++;
+      if(prog)prog.textContent='⬆️ Subiendo... '+ok+'/'+keys.length+' días';
+    }catch(e){console.warn('Error migrando',key,e);}
+  }
+  if(prog)prog.textContent='✅ '+ok+' días migrados correctamente a Supabase';
+  st(true,'✅ Migración completada — '+ok+' días en la nube');
+}
+
+// ══ CONSTANTES ══
+const CABS=['Santiago','Solecito','Tercero','Princess'];
+const CANALES=['IG orgánico','IG inorgánico','FB orgánico','FB inorgánico','Cliente','Recomendación','TikTok','Municipio','Amigo/Familiar','Convenio','Amenitiz','Google Maps','No se conoce','Proveedor','WhatsApp','Empleado','Boda'];
+const PAG=['Efectivo','Tarjeta','Transferencia','Mixto'];
+const PAG3=['Efectivo','Tarjeta','Transferencia'];
+const S3=['Sí','No','No aplica'];
+const S2=['Sí','No'];
+const S4=['Sí','No','Pendiente','No aplica'];
+const LIQ=['Pendiente','Pagado totalmente','Pagado parcialmente','Al llegar','Cancelado','No aplica'];
+const DEP=['Si devolver','No devolver'];
+const ADIC=['Ninguno','Early check-in','Late check-out','Personas adicionales','Early+Late','Early+Adicionales','Day Pass Terraza','Day Pass Camping','Todos'];
+const SERV=['Cabaña Santiago','Cabaña Solecito','Cabaña Tercero','Cabaña Princess','Camping','Day Pass Terraza','Day Pass Camping','Desayuno Buffet','El Estanquillo','Sesión de fotos','Sesión de video'];
+const ESTCAB=['Libre','Ocupada','Mantenimiento','Reservada','Check-out realizado'];
+const QUIEN=['Brenda','Lety','Mayra','Barreto','Raúl'];
+const AREAS_INC=['Cabaña Santiago','Cabaña Solecito','Cabaña Tercero','Cabaña Princess','Zona Camping 1','Zona Camping 2','Zona Camping 3','Zona Camping 4','Zona Camping 5','Zona Camping 6','Zona Camping 7','Zona Camping 8','Zona Camping 9','Zona Camping 10','Day Pass','El Estanquillo','Alberca','Canchas','Recepción','General'];
+const EQL=[{id:'casa4',l:'Casa 4 personas'},{id:'colchon',l:'Colchón mat.'},{id:'sleeping',l:'Sleeping bag'},{id:'almohada',l:'Almohada'},{id:'silla',l:'Silla plegable'},{id:'toldo',l:'Toldo 3x3'},{id:'tienda',l:'Tienda 2 personas'},{id:'mesa',l:'Mesa plegable'}];
+const EQUIPO_CAT=[
+  {id:'kit2',l:'Kit para 2 personas',p:1350},{id:'kit4',l:'Kit para 4 personas',p:2500},
+  {id:'tienda2',l:'Tienda para 2 personas',p:250},{id:'tienda4',l:'Tienda para 4 personas',p:400},
+  {id:'colchind',l:'Colchón individual',p:85},{id:'colchmat',l:'Colchón matrimonial',p:135},
+  {id:'colchcom',l:'Colchón comfort',p:165},{id:'sleeping',l:'Sleeping',p:140},
+  {id:'lona',l:'Lona para tienda de campaña',p:50},{id:'sillaadul',l:'Silla plegable adulto',p:50},
+  {id:'sillacom',l:'Silla plegable comfort adulto',p:80},{id:'sillanino',l:'Silla niño',p:40},
+  {id:'sillabaja',l:'Silla adulto baja',p:40},{id:'almohada',l:'Almohada',p:50},{id:'toldo3x3',l:'Toldo 3x3',p:350},
+];
+const MAMACHUY=[{l:'Desayunos adultos'},{l:'Paquetes infantiles'},{l:'Comidas'},{l:'Snacks'},{l:'Café especialidad'},{l:'Mixología / Cócteles'}];
+const TIENDITA=[{l:'Bebidas / Refrescos'},{l:'Snacks / Botanas'},{l:'Artículos varios'}];
+const DN=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const MN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+// ══ ESTRUCTURAS ══
+function mkRes(){return{nombre:'',servicio:'',canal:'',personas:'',fechaReserva:'',checkinGest:'',checkoutGest:'',liquidado:'Pendiente',precioNormal:'',precioDesc:'',adicionales:'Ninguno',costoAdic:'',formaPago:'',mEfectivo:'',mTarjeta:'',mTransferencia:'',depRecibido:'',depDevuelto:'',googleCal:'No aplica',comentarios:'',registradoPor:'',equipoGest:{},equipoGestCants:{}};}
+function mkCab(n_){return{nombre:n_,huesped:'',estado:'Libre',personas:'',checkin:'',checkout:'',noches:'',precio:'',depRec:'',depDev:'',deposito:'',formaPago:'',mEfectivo:'',mTarjeta:'',mTransferencia:'',depFormaPago:'',notas:'',devolverDep:'No aplica',pedirResena:'No aplica',enFidelizacion:'No aplica',depDevolver:'Si devolver',depReg:'Pendiente',resena:'No',fidelizacion:'No'};}
+function mkCamp(){return{huesped:'',estado:'Libre',grupoRes:'',personas:'',adultos:'',ninos:'',checkin:'',checkout:'',noches:'',precio:'',precioAdulto:'',precioNino:'',depRec:'',depDev:'',deposito:'',formaPago:'',mEfectivo:'',mTarjeta:'',mTransferencia:'',notas:'',devolverDep:'No aplica',pedirResena:'No aplica',enFidelizacion:'No aplica',depDevolver:'Si devolver',depReg:'Pendiente',resena:'No',fidelizacion:'No'};}
+function mkEnt(){return{m:'',fp:'Efectivo'};}
+function mkInc(){return{hora:'',fecha:'',area:'',reportadoPor:'',desc:'',accion:'',resuelto:'No',responsable:''};}
+function mkDia(){return{
+  personal:{montse:'',raul:'',brenda:'',lety:'',mayra:''},
+  reservas:Array(6).fill(0).map(mkRes),
+  cabanas:CABS.map(mkCab),
+  camping:Array(10).fill(0).map(mkCamp),
+  dpTerAdultos:'',dpTerNinos:'',dpTerPrecioAdulto:'',dpTerPrecioNino:'',dpTerPago:'',dpTerEf:'',dpTerTar:'',dpTerTra:'',
+  dpCamAdultos:'',dpCamNinos:'',dpCamPrecioAdulto:'',dpCamPrecioNino:'',dpCamPago:'',dpCamEf:'',dpCamTar:'',dpCamTra:'',
+  tiendita:[mkEnt()],cafe:[mkEnt()],fechaCorteEst:'',
+  equipo:Array(6).fill(0).map(()=>({huesped:'',items:{},cants:{},costoTotal:'',deposito:'',devuelto:'Pendiente'})),
+  incidencias:Array(4).fill(0).map(mkInc),
+  efectivo:'',tarjeta:'',transferencia:'',fechaCorte:''
+};}
+
+// ══ CONTRASEÑA (MODAL) ══
+const PASS='Gerencia2026';
+let authCorte=false,pendingTab=null,pendingBtn=null;
+function abrirModal(btn,t){
+  pendingBtn=btn;pendingTab=t;
+  const m=document.getElementById('pass-modal');
+  const inp=document.getElementById('pass-inp');
+  const err=document.getElementById('pass-err');
+  if(m){m.style.display='flex';}
+  if(inp){inp.value='';inp.onkeydown=e=>{if(e.key==='Enter')verificarPass();};setTimeout(()=>inp.focus(),150);}
+  if(err)err.textContent='';
+}
+function cerrarModal(){
+  const m=document.getElementById('pass-modal');if(m)m.style.display='none';
+  const inp=document.getElementById('pass-inp');if(inp)inp.value='';
+  const err=document.getElementById('pass-err');if(err)err.textContent='';
+}
+function verificarPass(){
+  const inp=document.getElementById('pass-inp');
+  const err=document.getElementById('pass-err');
+  if(!inp)return;
+  const v=inp.value.trim();
+  if(v===PASS){
+    authCorte=true;
+    cerrarModal();
+    setTimeout(()=>{
+      if(pendingBtn&&pendingTab){
+        _doTab(pendingBtn,pendingTab);
+      }
+    },100);
+  }else{
+    if(err)err.textContent='❌ Contraseña incorrecta, intenta de nuevo';
+    inp.value='';
+    inp.focus();
+  }
+}
+// Keydown en modal de contraseña - se asigna al abrir el modal
+
+// ══ ESTADO GLOBAL ══
+let DD=mkDia(),dirty=false,tabA='g',lastF='';
+let excludedCabs=new Set();
+const fmt=v=>v>0?'$'+Math.round(v).toLocaleString('es-MX'):'$0';
+const n=v=>parseFloat(v)||0;
+const el=id=>document.getElementById(id);
+const dnom=f=>f?DN[new Date(f+'T12:00:00').getDay()]:'';
+const dmes=f=>{if(!f)return'';const d=new Date(f+'T12:00:00');return MN[d.getMonth()]+' '+d.getFullYear();};
+
+// ══ CÁLCULOS ══
+function calcCampTot(c){const pA=n(c.precioAdulto)||n(c.precio);const pN=n(c.precioNino)||n(c.precio);return(n(c.adultos)*pA+n(c.ninos)*pN)*n(c.noches);}
+function calcDpTot(a,ni,pA,pN){return n(a)*n(pA)+n(ni)*n(pN);}
+function gestPor(sv){return DD.reservas.filter(r=>r.servicio===sv&&r.nombre);}
+function gestPorFecha(sv){const hoy=el('fi')?.value||lastF||'';return DD.reservas.filter(r=>r.servicio===sv&&r.nombre&&r.checkinGest===hoy);}
+function calcCabCorteD(cab,reservas){
+  const res=(reservas||[]).filter(r=>r.servicio==='Cabaña '+cab.nombre&&r.nombre);
+  if(res.length>0){
+    const r=res[0];
+    const pd=n(r.precioDesc);const pn=n(r.precioNormal);const ac=n(r.costoAdic);
+    if(pd>0)return pd+ac;   // precio con descuento SIEMPRE toma prioridad + adicional
+    if(pn>0)return pn+ac;   // precio normal + adicional
+    if(ac>0)return n(cab.noches)*n(cab.precio)+ac; // solo adicional sobre precio de ocupación
+  }
+  return n(cab.noches)*n(cab.precio);
+}
+function calcCabCorte(cab){return calcCabCorteD(cab,DD.reservas);}
+function precioLabel(cab){
+  const res=gestPor('Cabaña '+cab.nombre);
+  if(res.length>0){const r=res[0];const pd=n(r.precioDesc);const pn=n(r.precioNormal);if(pd>0)return{m:pd+n(r.costoAdic),l:'💡 Precio con descuento (Gestión)',c:'#1E6B33'};if(pn>0)return{m:pn+n(r.costoAdic),l:'💡 Precio normal (Gestión)',c:'#8A6D3B'};}
+  return{m:n(cab.noches)*n(cab.precio),l:'',c:''};
+}
+function normEst(arr){if(!arr||!arr.length)return[mkEnt()];return arr.map(x=>typeof x==='string'||typeof x==='number'?{m:String(x),fp:'Efectivo'}:(x||mkEnt()));}
+function totEst(arr){return normEst(arr).reduce((s,e)=>s+n(e.m),0);}
+function desglEst(arr){let ef=0,tar=0,tra=0;normEst(arr).forEach(e=>{const m=n(e.m);if(e.fp==='Efectivo')ef+=m;else if(e.fp==='Tarjeta')tar+=m;else tra+=m;});return{ef,tar,tra};}
+function calcEqGestTot(r){return EQUIPO_CAT.reduce((s,i)=>{if(!(r.equipoGest||{})[i.id])return s;return s+i.p*Math.max(1,parseInt((r.equipoGestCants||{})[i.id])||1);},0);}
+
+// ══ RANGOS PARA CORTE ══
+function getDStr(d){return d.toISOString().slice(0,10);}
+function getWeekDays(f){const d=new Date(f+'T12:00:00');const dw=d.getDay();const mon=new Date(d);mon.setDate(d.getDate()-(dw===0?6:dw-1));return Array.from({length:7},(_,i)=>{const dd=new Date(mon);dd.setDate(mon.getDate()+i);return getDStr(dd);});}
+function getMonthDays(f){const d=new Date(f+'T12:00:00');const y=d.getFullYear();const m=d.getMonth();return Array.from({length:new Date(y,m+1,0).getDate()},(_,i)=>getDStr(new Date(y,m,i+1)));}
+function getAllKeys(){const k=[];for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&key.startsWith('qm_'))k.push(key.slice(3));}return k;}
+function loadDay(f){try{const r=localStorage.getItem('qm_'+f);return r?JSON.parse(r):null;}catch{return null;}}
+async function loadDaySupa(f){
+  // Cargar desde Supabase y cachear en localStorage
+  const data=await cargarSupa(f);
+  return data||loadDay(f);
+}
+
+// ══ SUMA PERÍODO (cabañas por check-in, resto por día) ══
+function sumPeriodo(fechas){
+  const fSet=new Set(fechas);
+  let tCa=0,tCm=0,tDP=0,tEst=0,tEq=0,pEf=0,pTar=0,pTra=0,detCab=[];
+  const add=(m,fp,e,t,tr)=>{if(!m)return;if(fp==='Efectivo')pEf+=m;else if(fp==='Tarjeta')pTar+=m;else if(fp==='Transferencia')pTra+=m;else if(fp==='Mixto'){pEf+=n(e);pTar+=n(t);pTra+=n(tr);}};
+  // Cabañas: por fecha de check-in (busca en todas las fechas guardadas)
+  getAllKeys().forEach(sf=>{
+    const D=loadDay(sf);if(!D)return;
+    (D.cabanas||[]).forEach(c=>{
+      if(!c.huesped||!c.checkin||!fSet.has(c.checkin))return;
+      const cabKey=sf+'|'+c.nombre+'|'+c.huesped;
+      if(excludedCabs.has(cabKey))return;
+      const m=calcCabCorteD(c,D.reservas||[]);
+      tCa+=m;add(m,c.formaPago,c.mEfectivo,c.mTarjeta,c.mTransferencia);addSrv(caPag,m,c.formaPago,c.mEfectivo,c.mTarjeta,c.mTransferencia);
+      detCab.push({nombre:c.nombre,huesped:c.huesped,checkin:c.checkin,monto:m,guardadoEn:sf,key:cabKey});
+    });
+  });
+  // Resto: por día operativo
+  fechas.forEach(f=>{
+    const D=loadDay(f);if(!D)return;
+    (D.camping||[]).forEach(c=>{if(!c.huesped)return;const m=calcCampTot(c);tCm+=m;add(m,c.formaPago,c.mEfectivo,c.mTarjeta,c.mTransferencia);addSrv(cmPag,m,c.formaPago,c.mEfectivo,c.mTarjeta,c.mTransferencia);});
+    const dp1=calcDpTot(D.dpTerAdultos,D.dpTerNinos,D.dpTerPrecioAdulto,D.dpTerPrecioNino);
+    const dp2=calcDpTot(D.dpCamAdultos,D.dpCamNinos,D.dpCamPrecioAdulto,D.dpCamPrecioNino);
+    tDP+=dp1+dp2;add(dp1,D.dpTerPago,D.dpTerEf,D.dpTerTar,D.dpTerTra);addSrv(dpPag,dp1,D.dpTerPago,D.dpTerEf,D.dpTerTar,D.dpTerTra);add(dp2,D.dpCamPago,D.dpCamEf,D.dpCamTar,D.dpCamTra);addSrv(dpPag,dp2,D.dpCamPago,D.dpCamEf,D.dpCamTar,D.dpCamTra);
+    const _te=totEst(D.tiendita),_tm=totEst(D.cafe);tEst+=_te+_tm;
+    const p1=desglEst(D.tiendita),p2=desglEst(D.cafe);pEf+=p1.ef+p2.ef;pTar+=p1.tar+p2.tar;pTra+=p1.tra+p2.tra;estPag.ef+=p1.ef+p2.ef;estPag.tar+=p1.tar+p2.tar;estPag.tra+=p1.tra+p2.tra;
+    tEq+=(D.equipo||[]).reduce((s,e)=>s+n(e.costoTotal),0);
+  });
+  // Day Pass y Adicionales de Gestión (servicios no-cabaña)
+  let tAdic=0,tDPGTer=0,tDPGCam=0;
+  fechas.forEach(f2=>{
+    const D2=loadDay(f2);if(!D2)return;
+    (D2.reservas||[]).forEach(r=>{
+      if(!r.nombre)return;
+      const precio=n(r.precioDesc)||n(r.precioNormal);
+      const ac=n(r.costoAdic);
+      // Servicio = Day Pass → sumar precio+adicional al day pass de Gestión
+      if(r.servicio==='Day Pass Terraza'&&precio>0){tDPGTer+=precio+ac;return;}
+      if(r.servicio==='Day Pass Camping'&&precio>0){tDPGCam+=precio+ac;return;}
+      // Adicional = Day Pass → sumar costoAdic
+      if(r.adicionales==='Day Pass Terraza'&&ac>0){tDPGTer+=ac;return;}
+      if(r.adicionales==='Day Pass Camping'&&ac>0){tDPGCam+=ac;return;}
+      // Otros adicionales no-cabaña
+      if(r.servicio&&r.servicio.startsWith('Cabaña'))return;
+      if(ac>0)tAdic+=ac;
+    });
+  });
+  const tDPTotal=tDP+tDPGTer+tDPGCam;
+  const totalFinal=tCa+tCm+tDPTotal+tEst+tEq+tAdic;
+  return{tCa,tCm,tDP,tDPGTer,tDPGCam,tDPTotal,tEst,tEq,tAdic,total:totalFinal,pEf,pTar,pTra,detCab,caPag,cmPag,dpPag,estPag};
+}
+
+// ══ GUARDAR / CARGAR ══
+function guardar(f){
+  f=f||el('fi')?.value;if(!f)return;
+  localStorage.setItem('qm_'+f,JSON.stringify(DD));dirty=false;
+  const b=el('bs');if(b){b.textContent='✓ Guardado';b.classList.add('ok');setTimeout(()=>{b.textContent='💾 Guardar';b.classList.remove('ok');},2000);}
+  st(true,'🔒 Guardado · '+dnom(f)+' '+f);
+  guardarSupa(f,DD); // sync nube en background
+}
+function cargar(f){
+  const raw=localStorage.getItem('qm_'+f);
+  if(raw){try{
+    const base=mkDia(),loaded=JSON.parse(raw);
+    DD=Object.assign({},base,loaded,{
+      personal:Object.assign({},base.personal,loaded.personal||{}),
+      cabanas:(loaded.cabanas||base.cabanas).map((c,i)=>Object.assign({},base.cabanas[i],c)),
+      reservas:(loaded.reservas||base.reservas).map((r,i)=>Object.assign({},base.reservas[i],r)),
+      camping:(loaded.camping||base.camping).map((c,i)=>Object.assign({},base.camping[i],c)),
+      tiendita:normEst(loaded.tiendita),cafe:normEst(loaded.cafe),
+      equipo:(loaded.equipo||base.equipo).map((e,i)=>Object.assign({},base.equipo[i],e)),
+      incidencias:(loaded.incidencias||base.incidencias).map((inc,i)=>Object.assign({},base.incidencias[i],inc)),
+    });
+    return true;
+  }catch{DD=mkDia();return false;}}
+  DD=mkDia();return false;
+}
+async function cambiarFecha(){
+  const f=el('fi')?.value;if(!f)return;
+  if(dirty&&lastF)guardar(lastF);
+  lastF=f;el('dn').textContent=dnom(f);el('dm').textContent=dmes(f);
+  st(false,'⏳ Cargando desde la nube...');
+  // Intenta cargar desde Supabase (actualiza localStorage cache)
+  await cargarSupa(f);
+  const ok=cargar(f);llenarPersonal();render(tabA);
+  st(ok,ok?'✓ Datos cargados · '+dnom(f)+' '+f:'Día nuevo · '+dnom(f)+' '+f);dirty=false;
+}
+function llenarPersonal(){['montse','raul','brenda','lety','mayra'].forEach(k=>{const e=el('p-'+k);if(e)e.value=DD.personal[k]||'';});}
+
+// ══ AUTO-FILL DE GESTIÓN A OCUPACIÓN ══
+function autoFillOcupacion(){
+  let changed=false;
+  // Cabañas
+  CABS.forEach((cabNombre,idx)=>{
+    const cab=DD.cabanas[idx];
+    const res=DD.reservas.find(r=>r.servicio==='Cabaña '+cabNombre&&r.nombre);
+    if(res){
+      if(!cab.huesped&&res.nombre){cab.huesped=res.nombre;changed=true;}
+      if(!cab.checkin&&res.checkinGest){cab.checkin=res.checkinGest;changed=true;}
+      if(!cab.checkout&&res.checkoutGest){cab.checkout=res.checkoutGest;changed=true;}
+      if(!cab.personas&&res.personas){cab.personas=res.personas;changed=true;}
+      if(cab.estado==='Libre'&&res.nombre){cab.estado='Reservada';changed=true;}
+    }
+  });
+  // Camping
+  const campRes=DD.reservas.filter(r=>r.servicio==='Camping'&&r.nombre);
+  let zIdx=0;
+  campRes.forEach(res=>{
+    while(zIdx<DD.camping.length&&DD.camping[zIdx].huesped)zIdx++;
+    if(zIdx<DD.camping.length){
+      const c=DD.camping[zIdx];
+      if(!c.huesped){
+        c.huesped=res.nombre;
+        if(res.checkinGest)c.checkin=res.checkinGest;
+        if(res.checkoutGest)c.checkout=res.checkoutGest;
+        if(res.personas)c.adultos=res.personas;
+        if(!c.grupoRes||c.grupoRes==='— Sin grupo —')c.grupoRes=res.nombre;
+        c.estado='Reservada';changed=true;
+      }
+      zIdx++;
+    }
+  });
+  if(changed){dirty=true;guardar();}
+  return changed;
+}
+
+// ══ NAVEGACIÓN ══
+function tab(btn,t){
+  _doTab(btn,t);
+}
+function _doTab(btn,t){
+  document.querySelectorAll('.tab').forEach(b=>{b.classList.remove('on');b.style.background='rgba(255,255,255,.1)';});
+  btn.classList.add('on');
+  const col={g:'#5A1A8A',o:'#5C5F38',d:'#1F3A5F',c:'#8A6D3B',e:'#5C5F38',i:'#9C1F12',k:'#1F3A5F',r:'#1A5276'};
+  btn.style.background=col[t]||'#1F3A5F';tabA=t;
+  if(t==='o'){const changed=autoFillOcupacion();render(t);if(changed)st(true,'✅ Datos de Gestión sincronizados en Ocupación');}
+  else render(t);
+}
+function st(ok,msg){const s=el('status');if(!s)return;s.textContent=msg||'';s.className=ok?'ok':'';}
+function render(t){
+  const m=el('main');if(!m)return;
+  const fns={g:buildG,o:buildO,d:buildD,c:buildC,e:buildE,i:buildI,k:buildK,r:()=>buildR(el('fi')?.value||'')};
+  if(fns[t])m.innerHTML=fns[t]();
+  setTimeout(calcT,30);
+}
+
+// ══ UI HELPERS ══
+function sh(e,t,c,s=''){return`<div class="sh" style="background:${c}">${e} ${t}${s?` <span style="font-size:9px;font-weight:400;opacity:.8">— ${s}</span>`:''}</div>`;}
+function f(l,h,mn=88){return`<div class="f" style="min-width:${mn}px"><div class="fl">${l}</div>${h}</div>`;}
+function nc(v,c){return`<div class="nc" style="background:${c}">${v}</div>`;}
+function SI(t,id,val,onch,ph='',bg=''){return`<input type="${t}" id="${id}" value="${(val||'').toString().replace(/"/g,'&quot;')}" placeholder="${ph}" oninput="${onch}" style="${bg?'background:'+bg:''}"/>`;}
+function SO(opts,id,val,onch,bg=''){let s=`<select id="${id}" onchange="${onch}" style="${bg?'background:'+bg:''}">`;opts.forEach(o=>s+=`<option value="${o}"${o===val?' selected':''}>${o}</option>`);return s+'</select>';}
+function SOSERV(id,val,onch,bg=''){let s=`<select id="${id}" onchange="${onch}" style="${bg?'background:'+bg:''}"><option value="">— Selecciona servicio —</option>`;SERV.forEach(o=>s+=`<option value="${o}"${o===val?' selected':''}>${o}</option>`);return s+'</select>';}
+function gs(v){return`<div class="gs">${fmt(v)}</div>`;}
+function mixtoBox(pref,obj){
+  if(obj.formaPago!=='Mixto')return'';
+  const tot=n(obj.mEfectivo)+n(obj.mTarjeta)+n(obj.mTransferencia);
+  return`<div class="mixto-box"><div style="font-size:9px;font-weight:700;color:#1A4A7A;margin-bottom:5px">💳 DESGLOSE PAGO MIXTO</div>
+  <div class="row">${f('💵 Efectivo $',SI('number',pref+'ef',obj.mEfectivo,`updM('${pref}','mEfectivo',this.value)`,'0'),90)}${f('💳 Tarjeta $',SI('number',pref+'tar',obj.mTarjeta,`updM('${pref}','mTarjeta',this.value)`,'0'),90)}${f('🏦 Transf. $',SI('number',pref+'tra',obj.mTransferencia,`updM('${pref}','mTransferencia',this.value)`,'0'),110)}${tot>0?f('Total',`<div class="gs">${fmt(tot)}</div>`,80):''}</div></div>`;}
+function updM(p,campo,v){
+  if(p.startsWith('r')){const i=parseInt(p.slice(1));DD.reservas[i][campo]=v;}
+  else if(p.startsWith('c')&&!p.startsWith('ca')){const i=parseInt(p.slice(1));DD.cabanas[i][campo]=v;}
+  else if(p.startsWith('m')){const i=parseInt(p.slice(1));DD.camping[i][campo]=v;}
+  else if(p==='dter'){DD['dpTer'+(campo==='mEfectivo'?'Ef':campo==='mTarjeta'?'Tar':'Tra')]=v;}
+  else if(p==='dcam'){DD['dpCam'+(campo==='mEfectivo'?'Ef':campo==='mTarjeta'?'Tar':'Tra')]=v;}
+  dirty=true;
+}
+function syncBox(items,titulo){
+  if(!items.length)return'';
+  let h=`<div class="sync-box"><div style="font-size:9px;font-weight:700;color:#1E6B33;margin-bottom:4px">📋 ${titulo||'INFO DE GESTIÓN (Brenda · Lety · Mayra)'} <span style="background:#1E6B33;color:#fff;font-size:7px;font-weight:700;padding:1px 5px;border-radius:8px;margin-left:4px">SYNC</span></div>`;
+  items.forEach(r=>{
+    h+=`<div style="font-size:10px;color:#2D2D2D;line-height:1.7">👤 <b>${r.nombre}</b>`;
+    if(r.personas)h+=` · ${r.personas} persona(s)`;
+    if(r.canal)h+=` · Canal: ${r.canal}`;
+    if(r.registradoPor)h+=` · Registró: <b>${r.registradoPor}</b>`;
+    if(r.fechaReserva)h+=`<br>&nbsp;&nbsp;📌 Reserva: ${r.fechaReserva}`;
+    if(r.checkinGest)h+=` · 🏠 Check-in: <b>${r.checkinGest}</b>`;
+    if(r.checkoutGest)h+=` · 🚪 Check-out: ${r.checkoutGest}`;
+    if(r.precioDesc)h+=` · <b style="color:#1E6B33">Precio: ${fmt(n(r.precioDesc))}</b>`;
+    else if(r.precioNormal)h+=` · Precio: ${fmt(n(r.precioNormal))}`;
+    if(r.depRecibido)h+=` · 💰 Dep: ${fmt(n(r.depRecibido))}`;
+    if(r.liquidado&&r.liquidado!=='Pendiente')h+=` · ${r.liquidado}`;
+    h+='</div>';
+  });
+  h+='</div>';return h;
+}
+
+// ══ GESTIÓN ══
+function pagBadge(pag){
+  if(!pag||(!pag.ef&&!pag.tar&&!pag.tra))return'';
+  let s='<span style="font-size:8.5px;color:#666;margin-left:6px">(';
+  const parts=[];
+  if(pag.ef)parts.push('💵'+fmt(pag.ef));
+  if(pag.tar)parts.push('💳'+fmt(pag.tar));
+  if(pag.tra)parts.push('🏦'+fmt(pag.tra));
+  return s+parts.join(' · ')+')</span>';
+}
+function excluirCab(key){excludedCabs.add(key);generarCorte();}
+function restaurarCabs(){excludedCabs.clear();generarCorte();}
+
+function buildLockScreen(t,extra){
+  return `<div style="text-align:center;padding:60px 20px;background:#fff;border-radius:12px;margin-top:10px;box-shadow:0 2px 12px rgba(0,0,0,.1)">
+    <div style="font-size:48px;margin-bottom:14px">🔒</div>
+    <div style="font-size:16px;font-weight:700;color:#1F3A5F;margin-bottom:8px">Acceso restringido</div>
+    <div style="font-size:12px;color:#777;margin-bottom:20px">Solo Gerencia puede ver esta sección</div>
+    <input id="lock-inp" type="password" placeholder="Ingresa la contraseña..."
+      style="width:240px;border:2px solid #1F3A5F;border-radius:8px;padding:12px;font-size:15px;text-align:center;display:block;margin:0 auto 10px;font-family:Arial"
+      onkeydown="if(event.key==='Enter')checkLock('${t}','${extra||''}')"/>
+    <div id="lock-err" style="color:#9C1F12;font-size:11px;font-weight:700;min-height:16px;margin-bottom:12px"></div>
+    <button onclick="checkLock('${t}','${extra||''}')"
+      style="background:#1F3A5F;color:#fff;border:none;border-radius:8px;padding:12px 36px;font-weight:700;font-size:14px;cursor:pointer;font-family:Arial">
+      🔑 Entrar
+    </button>
+  </div>`;
+}
+function checkLock(t,extra){
+  const inp=document.getElementById('lock-inp');
+  if(!inp)return;
+  if(inp.value.trim()===PASS){
+    authCorte=true;
+    if(t==='r')el('main').innerHTML=buildR(extra||el('fi')?.value||'');
+    else render(t);
+  }else{
+    const err=document.getElementById('lock-err');
+    if(err)err.textContent='❌ Contraseña incorrecta, intenta de nuevo';
+    inp.value='';inp.focus();
+  }
+}
+function addReserva(){DD.reservas.push(mkRes());dirty=true;render(tabA);}
+function delReserva(i){
+  if(!DD.reservas[i].nombre&&!DD.reservas[i].servicio){DD.reservas.splice(i,1);dirty=true;render(tabA);return;}
+  if(confirm('¿Eliminar RES #'+(i+1)+' · '+(DD.reservas[i].nombre||'sin nombre')+'?')){DD.reservas.splice(i,1);dirty=true;render(tabA);}
+}
+function togEqG(ri,id){const eq=DD.reservas[ri].equipoGest||{};eq[id]=!eq[id];if(!eq[id])delete eq[id];DD.reservas[ri].equipoGest=eq;dirty=true;render(tabA);}
+function updEqGCant(ri,id,v){if(!DD.reservas[ri].equipoGestCants)DD.reservas[ri].equipoGestCants={};DD.reservas[ri].equipoGestCants[id]=v;dirty=true;}
+function limpiarCO(idx){DD.cabanas[idx].estado='Libre';DD.cabanas[idx].huesped='';dirty=true;render(tabA);}
+function limpiarCOCamp(idx){DD.camping[idx].estado='Libre';DD.camping[idx].huesped='';dirty=true;render(tabA);}
+
+function buildG(){
+  const co=DD.cabanas.filter(c=>c.estado==='Check-out realizado');
+  const coCamp=DD.camping.map((c,i)=>({...c,zi:i,z:i+1})).filter(c=>c.estado==='Check-out realizado');
+  let h=sh('👥','GESTIÓN DE RESERVAS','#5A1A8A','Brenda · Lety · Mayra');
+  if(co.length||coCamp.length){
+    h+=`<div class="card blu"><div style="font-size:11px;font-weight:700;color:#1A4A7A;margin-bottom:8px">📋 CHECK-OUTS DEL DÍA <span style="font-size:9px;font-weight:400;opacity:.7">— usa ✕ Limpiar para quitar residuales</span></div>`;
+    co.forEach(cab=>{const idx=DD.cabanas.findIndex(c=>c.nombre===cab.nombre);h+=`<div style="background:#fff;border:1px solid #AED6F1;border-radius:4px;padding:7px;margin-bottom:4px"><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px"><span style="background:#1F3A5F;color:#fff;padding:2px 8px;border-radius:4px;font-weight:700;font-size:10px">${cab.nombre}</span><span style="font-size:11px;font-weight:600">${cab.huesped||'Sin nombre'}</span><span style="background:#C9E3C6;color:#1E6B33;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px">✓ Check-out</span><button onclick="limpiarCO(${idx})" style="margin-left:auto;background:#F8C9C4;color:#9C1F12;border:1px solid #9C1F12;border-radius:4px;padding:2px 8px;font-size:9px;font-weight:700;cursor:pointer;font-family:Arial">✕ Limpiar</button></div><div style="display:flex;gap:10px;font-size:10px;flex-wrap:wrap"><span>💰${fmt(n(cab.deposito))}</span><span style="font-weight:700;color:${cab.depReg==='Sí'?'#1E6B33':'#9C1F12'}">Dep: ${cab.depReg}</span><span style="font-weight:700;color:${cab.resena==='Sí'?'#1E6B33':'#777'}">⭐${cab.resena}</span><span style="font-weight:700;color:${cab.fidelizacion==='Sí'?'#1E6B33':'#777'}">🎯${cab.fidelizacion}</span></div></div>`;});
+    coCamp.forEach(c=>{h+=`<div style="background:#fff;border:1px solid #A9DFBF;border-radius:4px;padding:7px;margin-bottom:4px"><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px"><span style="background:#5C5F38;color:#fff;padding:2px 8px;border-radius:4px;font-weight:700;font-size:10px">⛺ Zona ${c.z}</span><span style="font-size:11px;font-weight:600">${c.huesped||'Sin nombre'}</span>${c.grupoRes&&c.grupoRes!=='— Sin grupo —'?`<span style="background:#E8D5F5;color:#5A1A8A;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px">Grupo: ${c.grupoRes}</span>`:''}<span style="background:#C9E3C6;color:#1E6B33;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px">✓ Check-out</span><button onclick="limpiarCOCamp(${c.zi})" style="margin-left:auto;background:#F8C9C4;color:#9C1F12;border:1px solid #9C1F12;border-radius:4px;padding:2px 8px;font-size:9px;font-weight:700;cursor:pointer;font-family:Arial">✕ Limpiar</button></div><div style="display:flex;gap:10px;font-size:10px;flex-wrap:wrap"><span>💰${fmt(n(c.deposito))}</span><span style="font-weight:700;color:${c.depReg==='Sí'?'#1E6B33':'#9C1F12'}">Dep: ${c.depReg||'Pend.'}</span><span style="font-weight:700;color:${c.resena==='Sí'?'#1E6B33':'#777'}">⭐${c.resena||'No'}</span><span style="font-weight:700;color:${c.fidelizacion==='Sí'?'#1E6B33':'#777'}">🎯${c.fidelizacion||'No'}</span></div></div>`;});
+    h+='</div>';
+  }
+  DD.reservas.forEach((r,i)=>{
+    const flow=r.servicio&&r.nombre?`<div style="font-size:9px;color:#1E6B33;margin-top:3px;font-weight:600">→ Sincroniza con: ${r.servicio==='Camping'?'Ocupación → Camping':r.servicio.startsWith('Day Pass')?'Day Pass → '+r.servicio.replace('Day Pass ',''):r.servicio}</div>`:'';
+    const eq=r.equipoGest||{};const cants=r.equipoGestCants||{};const selEq=EQUIPO_CAT.filter(item=>eq[item.id]);const totEq=calcEqGestTot(r);
+    h+=`<div class="card ${i%2?'':'a'}">
+    <div style="display:flex;align-items:center;gap:8px;background:#5A1A8A;margin:-10px -10px 10px -10px;padding:6px 12px;border-radius:5px 5px 0 0">
+      <div style="background:#fff;color:#5A1A8A;font-size:13px;font-weight:900;padding:2px 12px;border-radius:20px">RES #${i+1}</div>
+      ${r.nombre?`<span style="color:#fff;font-size:12px;font-weight:700">${r.nombre}</span>`:'<span style="color:rgba(255,255,255,.5);font-size:11px;font-style:italic">Sin nombre</span>'}
+      ${r.servicio?`<span style="background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:700;padding:1px 8px;border-radius:10px;margin-left:auto">${r.servicio}</span>`:''}
+      <button onclick="delReserva(${i})" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:Arial;${r.servicio?'':'margin-left:auto'}">✕</button>
+    </div>
+    <div class="row" style="align-items:center;margin-bottom:6px">
+      ${nc(i+1,'#5A1A8A')}
+      ${f('Nombre del huésped',SI('text',`rn${i}`,r.nombre,`DD.reservas[${i}].nombre=this.value;dirty=true`,'Nombre completo'))}
+      ${f('Servicio',SOSERV(`rs${i}`,r.servicio,`DD.reservas[${i}].servicio=this.value;dirty=true;render(tabA)`,'#FCE6B0'))}
+      ${f('# Personas',SI('number',`rp${i}`,r.personas,`DD.reservas[${i}].personas=this.value;dirty=true`,'0'),75)}
+      ${f('Registrado por',SO(QUIEN,`rrp${i}`,r.registradoPor||QUIEN[0],`DD.reservas[${i}].registradoPor=this.value;dirty=true`,'#E8D5F5'),90)}
+    </div>
+    <div class="row">
+      ${f('📌 Fecha de reserva',SI('date',`rfr${i}`,r.fechaReserva,`DD.reservas[${i}].fechaReserva=this.value;dirty=true`),105)}
+      ${f('🏠 Check-in',SI('date',`rci${i}`,r.checkinGest,`DD.reservas[${i}].checkinGest=this.value;dirty=true`),100)}
+      ${f('🚪 Check-out',SI('date',`rco2${i}`,r.checkoutGest,`DD.reservas[${i}].checkoutGest=this.value;dirty=true`),100)}
+      ${f('Google Calendar',SO(S3,`rgc${i}`,r.googleCal||'No aplica',`DD.reservas[${i}].googleCal=this.value;dirty=true`),95)}
+    </div>
+    <div class="row">
+      ${f('Canal',SO(CANALES,`rc${i}`,r.canal,`DD.reservas[${i}].canal=this.value;dirty=true`,'#E8D5F5'))}
+      ${f('Liquidado',SO(LIQ,`rl${i}`,r.liquidado,`DD.reservas[${i}].liquidado=this.value;dirty=true`))}
+      ${f('Precio normal $',SI('number',`rpn${i}`,r.precioNormal,`DD.reservas[${i}].precioNormal=this.value;dirty=true`,'0'))}
+      ${f('Precio c/descuento $',SI('number',`rpd${i}`,r.precioDesc,`DD.reservas[${i}].precioDesc=this.value;dirty=true`,'0'))}
+    </div>
+    <div class="row">
+      ${f('Adicionales',SO(ADIC,`ra${i}`,r.adicionales,`DD.reservas[${i}].adicionales=this.value;dirty=true`))}
+      ${f('Costo adicional $',SI('number',`rca${i}`,r.costoAdic,`DD.reservas[${i}].costoAdic=this.value;dirty=true`,'0'))}
+      ${f('💰 Dep. recibido $',SI('number',`rdr${i}`,r.depRecibido,`DD.reservas[${i}].depRecibido=this.value;dirty=true`,'0'),110)}
+      ${f('💰 Dep. devuelto $',SI('number',`rdd${i}`,r.depDevuelto,`DD.reservas[${i}].depDevuelto=this.value;dirty=true`,'0'),110)}
+      ${f('Forma de pago',SO(PAG,`rfp${i}`,r.formaPago,`DD.reservas[${i}].formaPago=this.value;dirty=true;render(tabA)`))}
+    </div>
+    ${mixtoBox('r'+i,r)}
+    ${f('Comentarios',SI('text',`rco${i}`,r.comentarios,`DD.reservas[${i}].comentarios=this.value;dirty=true`,'Observaciones...'))}
+    ${r.adicionales!=='Ninguno'&&n(r.costoAdic)>0?`<div style="background:#EAF7EE;border:1px solid #1E6B33;border-radius:3px;padding:4px 10px;margin-top:4px;font-size:10px;color:#1E6B33;font-weight:700">➕ Adicional: ${r.adicionales} — ${fmt(n(r.costoAdic))}</div>`:''}
+    <div style="background:#FFF8E1;border:1px solid #F9A825;border-radius:4px;padding:7px 9px;margin-top:6px">
+      <div style="font-size:9px;font-weight:700;color:#E65100;margin-bottom:5px">⛺ EQUIPO DE CAMPING — ${selEq.length?selEq.length+' seleccionado(s)':'haz clic para seleccionar'}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        ${EQUIPO_CAT.map(item=>{const on=eq[item.id];const cant=cants[item.id]||1;return`<div onclick="togEqG(${i},'${item.id}')" style="display:flex;align-items:center;gap:3px;background:${on?'#1E6B33':'#fff'};color:${on?'#fff':'#444'};border:1px solid ${on?'#1E6B33':'#ccc'};border-radius:4px;padding:3px 7px;cursor:pointer;font-size:9.5px;font-weight:${on?700:400};user-select:none"><span>${on?'☑':'☐'}</span><span>${item.l}</span><span style="opacity:.7;font-size:8px">$${item.p.toLocaleString('es-MX')}</span>${on?`<input type="number" value="${cant}" min="1" onclick="event.stopPropagation()" oninput="event.stopPropagation();updEqGCant(${i},'${item.id}',this.value)" style="width:32px;font-size:9px;text-align:center;background:#fff;color:#1E6B33;border:1px solid #1E6B33;border-radius:2px;padding:1px 3px;font-weight:700"/>x`:''}</div>`;}).join('')}
+      </div>
+      ${totEq>0?`<div style="margin-top:5px;background:#1E6B33;color:#fff;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;display:inline-block">💰 Total equipo: ${fmt(totEq)}</div>`:''}
+    </div>
+    ${flow}</div>`;
+  });
+  h+=`<div style="text-align:center;padding:10px 0"><button onclick="addReserva()" style="background:#5A1A8A;color:#fff;border:none;border-radius:6px;padding:10px 28px;font-size:13px;font-weight:700;cursor:pointer;font-family:Arial">➕ Agregar reserva</button><div style="font-size:9px;color:#999;margin-top:4px">Sin límite de reservas por día</div></div>`;
+  return h;
+}
+
+// ══ OCUPACIÓN ══
+function buildO(){
+  let h=sh('🏠','CABAÑAS','#1F3A5F','Barreto');
+  h+=`<div class="tip">💡 Los datos de Gestión se sincronizan automáticamente al abrir esta pestaña. Completa los campos operativos y el corte usará el precio de Gestión si está registrado.</div>`;
+  DD.cabanas.forEach((cab,i)=>{
+    const ebg=cab.estado==='Ocupada'?'#C9E3C6':cab.estado==='Check-out realizado'?'#FCE6B0':'#f5f5f5';
+    const pe=precioLabel(cab);
+    const gInfo=gestPorFecha('Cabaña '+cab.nombre);
+    h+=`<div class="card ${i%2?'':'a'}">
+    ${syncBox(gInfo)}
+    <div class="row" style="align-items:center;margin-bottom:6px">
+      <div style="background:#1F3A5F;color:#fff;padding:2px 10px;border-radius:4px;font-weight:700;font-size:11px;flex-shrink:0">${cab.nombre}</div>
+      ${f('Estado',SO(ESTCAB,`ce${i}`,cab.estado,`DD.cabanas[${i}].estado=this.value;dirty=true;render(tabA)`,ebg),90)}
+      ${f('Huésped',SI('text',`ch${i}`,cab.huesped,`DD.cabanas[${i}].huesped=this.value;dirty=true`,'Nombre'))}
+      ${f('Personas',SI('number',`cp${i}`,cab.personas,`DD.cabanas[${i}].personas=this.value;dirty=true`,'0'),60)}
+      ${f('Check-in',SI('date',`cci${i}`,cab.checkin,`DD.cabanas[${i}].checkin=this.value;dirty=true;calcT()`))}
+      ${f('Check-out',SI('date',`cco${i}`,cab.checkout,`DD.cabanas[${i}].checkout=this.value;dirty=true`))}
+      ${f('Noches',SI('number',`cn${i}`,cab.noches,`DD.cabanas[${i}].noches=this.value;dirty=true;calcT()`,'0'),58)}
+      ${f('Precio/noche $',SI('number',`cpr${i}`,cab.precio,`DD.cabanas[${i}].precio=this.value;dirty=true;calcT()`,'0'))}
+      <div class="f" style="min-width:80px"><div class="fl">Corte</div><div class="gs" id="csub${i}">${fmt(calcCabCorte(cab))}</div></div>
+    </div>
+    ${pe.m>0&&pe.l?`<div style="font-size:9px;color:${pe.c};font-weight:600;margin-bottom:4px">${pe.l} = ${fmt(pe.m)}</div>`:''}
+    <div style="background:#E3F2FD;border:1px solid #1A4A7A;border-radius:4px;padding:7px 9px;margin-bottom:6px">
+      <div style="font-size:9px;font-weight:700;color:#1A4A7A;margin-bottom:5px">💳 PAGO DEL HOSPEDAJE</div>
+      <div class="row">
+        ${f('Forma de pago hospedaje',SO(PAG,`cfp${i}`,cab.formaPago,`DD.cabanas[${i}].formaPago=this.value;dirty=true;render(tabA)`))}
+        ${f('Notas',SI('text',`cnt${i}`,cab.notas,`DD.cabanas[${i}].notas=this.value;dirty=true`,'...'))}
+      </div>
+      ${mixtoBox('c'+i,cab)}
+    </div>
+
+
+    ${cab.estado==='Check-out realizado'?`<div class="checkout-box"><div style="font-size:10px;font-weight:700;color:#E65100;margin-bottom:6px">⚠️ CONFIRMACIÓN CHECK-OUT</div>
+      <div class="row">${f('Depósito garantía $',SI('number',`cdep${i}`,cab.deposito,`DD.cabanas[${i}].deposito=this.value;dirty=true`,'0'))}${f('¿Devolver?',SO(DEP,`cdv${i}`,cab.depDevolver||'Si devolver',`DD.cabanas[${i}].depDevolver=this.value;dirty=true`))}${f('Dep. regresado',SO(S4,`cdr2${i}`,cab.depReg||'Pendiente',`DD.cabanas[${i}].depReg=this.value;dirty=true`))}${f('Reseña Google',SO(S2,`crs${i}`,cab.resena||'No',`DD.cabanas[${i}].resena=this.value;dirty=true`))}${f('Fidelización',SO(S2,`cfi${i}`,cab.fidelizacion||'No',`DD.cabanas[${i}].fidelizacion=this.value;dirty=true`))}</div></div>`:''}
+    </div>`;
+  });
+  h+=`<div class="tb" id="tca" style="background:#1F3A5F">TOTAL CABAÑAS: ${fmt(DD.cabanas.reduce((s,c)=>s+calcCabCorte(c),0))}</div>`;
+  h+=sh('⛺','CAMPING · 10 zonas','#5C5F38','Raúl');
+  const cg=gestPorFecha('Camping');if(cg.length)h+=syncBox(cg);
+  h+=`<div class="tip">Dos precios: adulto y niño/noche. Usa el campo "Grupo" para vincular varias zonas de la misma reserva.</div>`;
+  DD.camping.forEach((c,i)=>{
+    const ebg2=c.estado==='Ocupada'?'#C9E3C6':c.estado==='Check-out realizado'?'#FCE6B0':'#f5f5f5';
+    const campResNames=['— Sin grupo —',...DD.reservas.filter(r=>r.servicio==='Camping'&&r.nombre).map(r=>r.nombre)];
+    h+=`<div class="card ${i%2?'':'a'}">
+    <div style="display:flex;align-items:center;gap:8px;background:#5C5F38;margin:-10px -10px 10px -10px;padding:6px 12px;border-radius:5px 5px 0 0">
+      <div style="background:#fff;color:#5C5F38;font-size:12px;font-weight:900;padding:2px 10px;border-radius:15px">ZONA ${i+1}</div>
+      ${c.huesped?`<span style="color:#fff;font-size:11px;font-weight:700">${c.huesped}</span>`:'<span style="color:rgba(255,255,255,.5);font-size:10px;font-style:italic">Sin huésped</span>'}
+      ${c.grupoRes&&c.grupoRes!=='— Sin grupo —'?`<span style="background:rgba(255,255,255,.25);color:#fff;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:auto">Grupo: ${c.grupoRes}</span>`:''}
+    </div>
+    <div class="row" style="align-items:center;margin-bottom:6px">
+      ${f('Estado',SO(ESTCAB,`mes${i}`,c.estado,`DD.camping[${i}].estado=this.value;dirty=true;render(tabA)`,ebg2),95)}
+      ${f('Huésped / Responsable',SI('text',`mh${i}`,c.huesped,`DD.camping[${i}].huesped=this.value;dirty=true`,'Nombre'))}
+      ${f('Grupo o Reserva',SO(campResNames,`mgr${i}`,c.grupoRes||'— Sin grupo —',`DD.camping[${i}].grupoRes=this.value;dirty=true`,'#E8D5F5'))}
+    </div>
+    <div class="row">
+      ${f('Adultos',SI('number',`ma${i}`,c.adultos,`DD.camping[${i}].adultos=this.value;dirty=true;calcT()`,'0'),60)}
+      ${f('Niños',SI('number',`mn${i}`,c.ninos,`DD.camping[${i}].ninos=this.value;dirty=true;calcT()`,'0'),55)}
+      ${f('Check-in',SI('date',`mci${i}`,c.checkin,`DD.camping[${i}].checkin=this.value;dirty=true`))}
+      ${f('Check-out',SI('date',`mco${i}`,c.checkout,`DD.camping[${i}].checkout=this.value;dirty=true`))}
+      ${f('Noches',SI('number',`mno${i}`,c.noches,`DD.camping[${i}].noches=this.value;dirty=true;calcT()`,'0'),58)}
+      ${f('$/Adulto',SI('number',`mpa${i}`,c.precioAdulto||c.precio,`DD.camping[${i}].precioAdulto=this.value;DD.camping[${i}].precio=this.value;dirty=true;calcT()`,'0'),80)}
+      ${f('$/Niño',SI('number',`mpn${i}`,c.precioNino,`DD.camping[${i}].precioNino=this.value;dirty=true;calcT()`,'0'),78)}
+      <div class="f" style="min-width:78px"><div class="fl">Total zona</div><div class="gs" id="mcs${i}">${fmt(calcCampTot(c))}</div></div>
+    </div>
+    <div class="row">
+      ${f('Dep. recibido $',SI('number',`mdr${i}`,c.depRec,`DD.camping[${i}].depRec=this.value;dirty=true`,'0'),88)}
+      ${f('Dep. devuelto $',SI('number',`mdd${i}`,c.depDev,`DD.camping[${i}].depDev=this.value;dirty=true`,'0'),88)}
+      ${f('Forma de pago',SO(PAG,`mfp${i}`,c.formaPago,`DD.camping[${i}].formaPago=this.value;dirty=true;render(tabA)`))}
+      ${f('Notas',SI('text',`mnts${i}`,c.notas,`DD.camping[${i}].notas=this.value;dirty=true`,'...'))}
+    </div>
+    ${mixtoBox('m'+i,c)}
+    <div class="fidel-box"><div class="fidel-hdr">🎯 DEPÓSITO · RESEÑA · FIDELIZACIÓN</div>
+      <div class="row">
+        ${f('¿Devolver depósito?',SO(S3,`mdd2${i}`,c.devolverDep||'No aplica',`DD.camping[${i}].devolverDep=this.value;dirty=true`,'#F3E5F5'),110)}
+        ${f('¿Pedir reseña?',SO(S3,`mpr${i}`,c.pedirResena||'No aplica',`DD.camping[${i}].pedirResena=this.value;dirty=true`,'#F3E5F5'),105)}
+        ${f('¿Fidelización?',SO(S3,`mpf${i}`,c.enFidelizacion||'No aplica',`DD.camping[${i}].enFidelizacion=this.value;dirty=true`,'#F3E5F5'),100)}
+      </div></div>
+    ${c.estado==='Check-out realizado'?`<div class="checkout-box"><div style="font-size:10px;font-weight:700;color:#E65100;margin-bottom:6px">⚠️ CONFIRMACIÓN CHECK-OUT — Zona ${i+1}</div>
+      <div class="row">${f('Depósito $',SI('number',`mdep${i}`,c.deposito,`DD.camping[${i}].deposito=this.value;dirty=true`,'0'))}${f('¿Devolver?',SO(DEP,`mdev${i}`,c.depDevolver||'Si devolver',`DD.camping[${i}].depDevolver=this.value;dirty=true`))}${f('Dep. regresado',SO(S4,`mdr3${i}`,c.depReg||'Pendiente',`DD.camping[${i}].depReg=this.value;dirty=true`))}${f('Reseña',SO(S2,`mrs${i}`,c.resena||'No',`DD.camping[${i}].resena=this.value;dirty=true`))}${f('Fidelización',SO(S2,`mfi${i}`,c.fidelizacion||'No',`DD.camping[${i}].fidelizacion=this.value;dirty=true`))}</div></div>`:''}
+    </div>`;
+  });
+  const grupos={};DD.camping.forEach((c,i)=>{if(c.grupoRes&&c.grupoRes!=='— Sin grupo —'&&c.huesped){if(!grupos[c.grupoRes])grupos[c.grupoRes]=[];grupos[c.grupoRes].push({z:i+1,t:calcCampTot(c)});}});
+  if(Object.keys(grupos).length){h+=`<div style="background:#E8D5F5;border:1px solid #7B1FA2;border-radius:6px;padding:10px;margin-top:8px"><div style="font-size:11px;font-weight:700;color:#7B1FA2;margin-bottom:7px">📊 RESUMEN POR GRUPO</div>`;Object.entries(grupos).forEach(([g,zs])=>{const t=zs.reduce((s,z)=>s+z.t,0);h+=`<div style="display:flex;justify-content:space-between;padding:6px 10px;background:#fff;border-radius:4px;margin-bottom:4px;font-size:11px"><span><b>${g}</b> — Zonas: ${zs.map(z=>'Z'+z.z).join(', ')}</span><span style="font-weight:700;color:#1E6B33">${fmt(t)}</span></div>`;});h+='</div>';}
+  h+=`<div class="tb" id="tcamp" style="background:#5C5F38">TOTAL CAMPING: ${fmt(DD.camping.reduce((s,c)=>s+calcCampTot(c),0))}</div>`;
+  return h;
+}
+
+// ══ DAY PASS ══
+function buildD(){
+  let h=sh('🎫','DAY PASS','#1F3A5F');h+=`<div class="tip">Dos precios: adulto y niño.</div>`;
+  [{l:'Terraza',max:50,aF:'dpTerAdultos',nF:'dpTerNinos',paF:'dpTerPrecioAdulto',pnF:'dpTerPrecioNino',pa:'dpTerPago',pref:'dter',eF:'dpTerEf',tF:'dpTerTar',trF:'dpTerTra',sv:'Day Pass Terraza'},
+   {l:'Camping',max:60,aF:'dpCamAdultos',nF:'dpCamNinos',paF:'dpCamPrecioAdulto',pnF:'dpCamPrecioNino',pa:'dpCamPago',pref:'dcam',eF:'dpCamEf',tF:'dpCamTar',trF:'dpCamTra',sv:'Day Pass Camping'}
+  ].forEach((dp,i)=>{
+    const g=gestPorFecha(dp.sv);const a=n(DD[dp.aF]);const ni=n(DD[dp.nF]);const tot=calcDpTot(DD[dp.aF],DD[dp.nF],DD[dp.paF],DD[dp.pnF]);const disp=dp.max-(a+ni);
+    const dpO={formaPago:DD[dp.pa],mEfectivo:DD[dp.eF],mTarjeta:DD[dp.tF],mTransferencia:DD[dp.trF]};
+    h+=`<div class="card ${i?'':'a'}">${syncBox(g)}<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+    <span style="background:${i?'#5C5F38':'#1F3A5F'};color:#fff;padding:2px 10px;border-radius:4px;font-weight:700;font-size:11px">${dp.l}</span><span style="font-size:10px;color:#8A6D3B">Máx: ${dp.max}</span>
+    ${a+ni>0?`<span style="background:${disp<=0?'#F8C9C4':'#C9E3C6'};color:${disp<=0?'#9C1F12':'#1E6B33'};font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">Disponibles: ${disp}</span>`:''}
+    </div><div class="row">
+    ${f('# Adultos',SI('number',dp.aF+'i',DD[dp.aF],`DD['${dp.aF}']=this.value;dirty=true;calcT()`,'0'),80)}${f('# Niños',SI('number',dp.nF+'i',DD[dp.nF],`DD['${dp.nF}']=this.value;dirty=true;calcT()`,'0'),72)}
+    ${f('$ Adulto',SI('number',dp.paF+'i',DD[dp.paF],`DD['${dp.paF}']=this.value;dirty=true;calcT()`,'0'),78)}${f('$ Niño',SI('number',dp.pnF+'i',DD[dp.pnF],`DD['${dp.pnF}']=this.value;dirty=true;calcT()`,'0'),72)}
+    <div class="f" style="min-width:78px"><div class="fl">Total</div>${gs(tot)}</div>
+    ${f('Forma de pago',SO(PAG,dp.pa+'i',DD[dp.pa],`DD['${dp.pa}']=this.value;dirty=true;render(tabA)`))}
+    </div>${DD[dp.pa]==='Mixto'?mixtoBox(dp.pref,dpO):''}</div>`;});
+  h+=`<div class="tb" id="tdp" style="background:#1F3A5F">TOTAL DAY PASS: ${fmt(calcDpTot(DD.dpTerAdultos,DD.dpTerNinos,DD.dpTerPrecioAdulto,DD.dpTerPrecioNino)+calcDpTot(DD.dpCamAdultos,DD.dpCamNinos,DD.dpCamPrecioAdulto,DD.dpCamPrecioNino))}</div>`;
+  return h;
+}
+
+// ══ EL ESTANQUILLO ══
+function addEnt(sec){if(sec==='t')DD.tiendita.push(mkEnt());else DD.cafe.push(mkEnt());dirty=true;render(tabA);}
+function delEnt(sec,i){if(sec==='t'){if(DD.tiendita.length>1)DD.tiendita.splice(i,1);}else{if(DD.cafe.length>1)DD.cafe.splice(i,1);}dirty=true;render(tabA);}
+function buildEstSec(titulo,sec,arr){
+  const ents=normEst(arr);const tot=totEst(arr);const pg=desglEst(arr);
+  let h=`<div class="card"><div style="background:#5C5F38;color:#fff;padding:6px 10px;border-radius:4px;font-weight:700;font-size:11px;margin-bottom:8px">${titulo}</div>`;
+  ents.forEach((e,i)=>{h+=`<div class="est-row ${i%2?'':'a'}" style="border-radius:3px"><input type="number" value="${e.m||''}" placeholder="Monto $" oninput="DD.${sec==='t'?'tiendita':'cafe'}[${i}].m=this.value;dirty=true;calcT()" style="font-size:13px;font-weight:700;text-align:center;background:#FCE6B0;color:#8A5A00;border:1px solid #ccc;border-radius:3px;padding:4px 6px"/><select onchange="DD.${sec==='t'?'tiendita':'cafe'}[${i}].fp=this.value;dirty=true;calcT()" style="font-size:11px;border:1px solid #ccc;border-radius:3px;padding:4px 5px;background:${e.fp==='Efectivo'?'#E8F5E9':e.fp==='Tarjeta'?'#E3F2FD':'#FFF3E0'}">${PAG3.map(p=>`<option value="${p}"${p===e.fp?' selected':''}>${p}</option>`).join('')}</select><div class="gs" id="${sec}sub${i}">${fmt(n(e.m))}</div><button onclick="delEnt('${sec}',${i})" style="background:#F8C9C4;color:#9C1F12;border:none;border-radius:3px;padding:4px 6px;cursor:pointer;font-family:Arial;font-size:11px">✕</button></div>`;});
+  h+=`<button onclick="addEnt('${sec}')" style="background:#5C5F38;color:#fff;border:none;border-radius:4px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial;margin-top:5px;margin-bottom:8px">+ Agregar monto</button>`;
+  h+=`<div style="display:flex;justify-content:space-between;background:#1F3A5F;color:#fff;padding:7px 12px;border-radius:4px;flex-wrap:wrap;gap:6px"><span style="font-weight:700">TOTAL ${titulo}</span><span style="font-weight:700;font-size:13px">${fmt(tot)}</span></div>`;
+  if(tot>0)h+=`<div style="display:flex;gap:10px;padding:5px 4px;font-size:10px;flex-wrap:wrap">${pg.ef>0?`<span>💵 Ef: <b>${fmt(pg.ef)}</b></span>`:''}${pg.tar>0?`<span>💳 Tar: <b>${fmt(pg.tar)}</b></span>`:''}${pg.tra>0?`<span>🏦 Tr: <b>${fmt(pg.tra)}</b></span>`:''}</div>`;
+  h+='</div>';return h;
+}
+let tipoEst='d';
+function setTipoEst(t){tipoEst=t;['d','s','m'].forEach(x=>{const b=el('est-btn-'+x);if(b)b.className='per-btn'+(x===t?' on':'');});generarEst();}
+function generarEst(){const f2=el('est-fecha')?.value||el('fi')?.value||'';const cr=el('est-hist');if(cr)cr.innerHTML=renderEstHist(f2,tipoEst);}
+function renderEstHist(fecha,tipo){
+  let dias=[],label='';
+  if(tipo==='d'){dias=[fecha];label=dnom(fecha)+' '+new Date(fecha+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});}
+  else if(tipo==='s'){dias=getWeekDays(fecha);label='Semana '+new Date(dias[0]+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'})+' al '+new Date(dias[6]+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'});}
+  else{dias=getMonthDays(fecha);const d2=new Date(fecha+'T12:00:00');label=MN[d2.getMonth()]+' '+d2.getFullYear();}
+  let tT=0,tM=0,pEf=0,pTar=0,pTra=0,dc=0;
+  dias.forEach(f2=>{const D=loadDay(f2);if(!D)return;dc++;tT+=totEst(D.tiendita);tM+=totEst(D.cafe);const p1=desglEst(D.tiendita),p2=desglEst(D.cafe);pEf+=p1.ef+p2.ef;pTar+=p1.tar+p2.tar;pTra+=p1.tra+p2.tra;});
+  return`<div style="background:#1F3A5F;color:#fff;padding:8px 12px;border-radius:6px"><div style="font-size:11px;font-weight:700;margin-bottom:5px">${label} ${dc>0?'— '+dc+' día(s) con datos':''}</div><div style="display:flex;gap:14px;flex-wrap:wrap"><div>🛒 Tiendita: <b>${fmt(tT)}</b></div><div>☕ Mamachuy: <b>${fmt(tM)}</b></div><div style="font-size:14px;font-weight:900">Total: ${fmt(tT+tM)}</div></div>${tT+tM>0?`<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:5px;font-size:10px;opacity:.9">${pEf>0?`<span>💵 Ef: <b>${fmt(pEf)}</b></span>`:''}${pTar>0?`<span>💳 Tar: <b>${fmt(pTar)}</b></span>`:''}${pTra>0?`<span>🏦 Tr: <b>${fmt(pTra)}</b></span>`:''}</div>`:''}</div>`;
+}
+function buildC(){
+  const fiH=el('fi')?.value||new Date().toISOString().slice(0,10);
+  const tot=totEst(DD.tiendita)+totEst(DD.cafe);
+  let h=sh('🛒','EL ESTANQUILLO','#5C5F38');
+  h+=`<div class="row"><div class="f" style="min-width:130px"><div class="fl">Fecha corte de caja</div><input type="date" id="est-fc" value="${DD.fechaCorteEst||''}" oninput="DD.fechaCorteEst=this.value;dirty=true" style="background:#FCE6B0;border-color:#8A6D3B"/></div></div>`;
+  h+=buildEstSec('🛒 TIENDITA','t',DD.tiendita);
+  h+=buildEstSec('☕ ESTANQUILLO MAMACHUY','c',DD.cafe);
+  h+=`<div class="tb" id="test" style="background:#5C5F38">TOTAL EL ESTANQUILLO: ${fmt(tot)}</div>`;
+  h+=`<div style="background:#1F3A5F;color:#fff;padding:8px 12px;border-radius:6px;margin-top:10px"><div style="font-size:11px;font-weight:700;margin-bottom:6px">📅 VER POR PERÍODO</div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input type="date" id="est-fecha" value="${fiH}" style="background:#FCE6B0;border:2px solid #8A6D3B;border-radius:4px;padding:4px 8px;font-size:12px;font-weight:700;color:#8A5A00;font-family:Arial"/><button id="est-btn-d" class="per-btn on" onclick="setTipoEst('d')">📅 Día</button><button id="est-btn-s" class="per-btn" onclick="setTipoEst('s')">📆 Semana</button><button id="est-btn-m" class="per-btn" onclick="setTipoEst('m')">🗓️ Mes</button><button onclick="generarEst()" style="background:#8A6D3B;color:#fff;border:none;border-radius:4px;padding:6px 12px;font-weight:700;font-size:11px;cursor:pointer;font-family:Arial">Ver</button></div></div>
+  <div id="est-hist" style="margin-top:8px">${renderEstHist(fiH,'d')}</div>`;
+  return h;
+}
+
+// ══ EQUIPO ══
+function togEq(i,id){if(!DD.equipo[i].items)DD.equipo[i].items={};DD.equipo[i].items[id]=!DD.equipo[i].items[id];if(!DD.equipo[i].items[id])delete DD.equipo[i].items[id];dirty=true;render(tabA);}
+function buildE(){
+  let h=sh('⛺','EQUIPO CAMPING RENTADO','#5C5F38','Raúl');
+  const rCE=DD.reservas.filter(r=>r.nombre&&Object.values(r.equipoGest||{}).some(Boolean));
+  if(rCE.length){h+=`<div style="background:#EAF7EE;border:2px solid #1E6B33;border-radius:6px;padding:10px;margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:#1E6B33;margin-bottom:7px">📋 PRE-RESERVADO EN GESTIÓN <span style="background:#1E6B33;color:#fff;font-size:7px;font-weight:700;padding:1px 5px;border-radius:8px;margin-left:4px">SYNC</span></div>`;rCE.forEach(r=>{const eq=r.equipoGest||{};const cants=r.equipoGestCants||{};const items=EQUIPO_CAT.filter(item=>eq[item.id]);const tot=calcEqGestTot(r);h+=`<div style="background:#fff;border:1px solid #A9DFBF;border-radius:4px;padding:7px;margin-bottom:5px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap"><span style="background:#1E6B33;color:#fff;padding:1px 8px;border-radius:4px;font-weight:700;font-size:10px">👤 ${r.nombre}</span>${r.servicio?`<span style="background:#FCE6B0;color:#8A5A00;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px">${r.servicio}</span>`:''}</div><div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px">${items.map(item=>{const qty=parseInt(cants[item.id])||1;return`<span style="background:#C9E3C6;color:#1E6B33;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:10px">${item.l}${qty>1?' x'+qty:''} — ${fmt(item.p*qty)}</span>`;}).join('')}</div><div style="font-size:11px;font-weight:700;color:#1E6B33">💰 Total: ${fmt(tot)}</div></div>`;});h+='</div>';}
+  h+=`<div class="tip">Haz clic en cada artículo para marcarlo</div>`;
+  DD.equipo.forEach((eq,i)=>{const items=eq.items||{};const arts=Object.entries(items).filter(([,v])=>v).map(([k])=>EQL.find(x=>x.id===k)?.l||k);
+    h+=`<div class="card ${i%2?'':'a'}"><div class="row" style="align-items:center;margin-bottom:7px">
+    ${nc(i+1,'#5C5F38')}${f('Huésped',SI('text',`eh${i}`,eq.huesped,`DD.equipo[${i}].huesped=this.value;dirty=true`,'Nombre'))}${f('Costo renta $',SI('number',`ect${i}`,eq.costoTotal,`DD.equipo[${i}].costoTotal=this.value;dirty=true`,'0'),110)}${f('Depósito $',SI('number',`edp${i}`,eq.deposito,`DD.equipo[${i}].deposito=this.value;dirty=true`,'0'),100)}${f('Devolución',SO(['Pendiente','Devuelto OK','Daño — cobrar'],`edv${i}`,eq.devuelto||'Pendiente',`DD.equipo[${i}].devuelto=this.value;dirty=true`))}</div>
+    <div style="background:#F4EFE6;border-radius:4px;padding:7px 9px"><div class="fl" style="margin-bottom:5px">Artículos rentados — haz clic para seleccionar (mismos que en Gestión)</div><div style="display:flex;flex-wrap:wrap;gap:5px">
+    ${EQUIPO_CAT.map(eq2=>{const on=items[eq2.id];const cant=eq.cants?.[eq2.id]||'1';return`<div class="eq-i ${on?'on':''}" onclick="togEq(${i},'${eq2.id}')" style="font-size:10px"><span>${on?'☑':'☐'}</span><span>${eq2.l}</span><span style="opacity:.6;font-size:8px;margin-left:2px">$${eq2.p.toLocaleString('es-MX')}</span>${on?`<input type="number" value="${cant}" min="1" onclick="event.stopPropagation()" oninput="event.stopPropagation();if(!DD.equipo[${i}].cants)DD.equipo[${i}].cants={};DD.equipo[${i}].cants['${eq2.id}']=this.value;dirty=true" style="width:34px;font-size:9px;text-align:center;margin-left:3px"/>`:''}</div>`;}).join('')}
+    </div>${arts.length?`<div style="margin-top:5px;font-size:10px;color:#1E6B33;font-weight:600">✓ ${arts.join(' · ')}</div>`:''}</div></div>`;});
+  return h;
+}
+
+// ══ INCIDENCIAS ══
+function buildI(){
+  let h=sh('⚠️','INCIDENCIAS DEL DÍA','#9C1F12');
+  DD.incidencias.forEach((inc,i)=>{h+=`<div class="card ${i%2?'':'r'}"><div class="row" style="align-items:flex-end">
+    ${nc(i+1,'#9C1F12')}${f('Fecha',SI('date',`ifc${i}`,inc.fecha,`DD.incidencias[${i}].fecha=this.value;dirty=true`),100)}${f('Hora',SI('time',`ihr${i}`,inc.hora,`DD.incidencias[${i}].hora=this.value;dirty=true`),70)}${f('Área',SO(AREAS_INC,`iar${i}`,inc.area,`DD.incidencias[${i}].area=this.value;dirty=true`))}${f('Reportó',SI('text',`irpt${i}`,inc.reportadoPor,`DD.incidencias[${i}].reportadoPor=this.value;dirty=true`,'Quien reporta'),100)}
+  </div><div class="row" style="margin-top:4px">
+    ${f('Descripción',SI('text',`ids${i}`,inc.desc,`DD.incidencias[${i}].desc=this.value;dirty=true`,'¿Qué ocurrió?'))}${f('Acción tomada',SI('text',`iac${i}`,inc.accion,`DD.incidencias[${i}].accion=this.value;dirty=true`,'¿Cómo se atendió?'))}${f('¿Resuelto?',SO(['No','Sí','En proceso'],`irs${i}`,inc.resuelto||'No',`DD.incidencias[${i}].resuelto=this.value;dirty=true`),80)}${f('Responsable',SI('text',`irp${i}`,inc.responsable,`DD.incidencias[${i}].responsable=this.value;dirty=true`,'Nombre'))}
+  </div></div>`;});
+  return h;
+}
+
+// ══ CORTE ══
+let tipoCorte='d';
+function setTipo(t){tipoCorte=t;['d','s','m'].forEach(x=>{const b=el('btn-'+x);if(b)b.className='per-btn'+(x===t?' on':'');});generarCorte();}
+async function generarCorte(){
+  const f2=el('corte-fecha')?.value||el('fi')?.value||'';
+  const cr=el('corte-result');
+  if(!cr)return;
+  cr.innerHTML='<div style="text-align:center;padding:20px;color:#1F3A5F;font-weight:700">⏳ Cargando datos desde la nube...</div>';
+  // Cargar todos los días del período desde Supabase
+  let dias=[];
+  if(tipoCorte==='d')dias=[f2];
+  else if(tipoCorte==='s')dias=getWeekDays(f2);
+  else dias=getMonthDays(f2);
+  // Cargar cada día desde Supabase si no está en cache
+  await Promise.all(dias.map(f3=>cargarSupa(f3)));
+  // También cargar todas las fechas disponibles en Supabase para cabañas por checkin
+  const supaKeys=await getAllKeysSupa();
+  await Promise.all(supaKeys.map(f3=>cargarSupa(f3)));
+  cr.innerHTML=renderCorte(f2,tipoCorte);
+}
+function renderCorte(fecha,tipo){
+  let dias=[],label='';
+  if(tipo==='d'){dias=[fecha];label=dnom(fecha)+' '+new Date(fecha+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});}
+  else if(tipo==='s'){dias=getWeekDays(fecha);label='Semana '+new Date(dias[0]+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'})+' al '+new Date(dias[6]+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'});}
+  else{dias=getMonthDays(fecha);const d2=new Date(fecha+'T12:00:00');label=MN[d2.getMonth()]+' '+d2.getFullYear();}
+  const {tCa,tCm,tDP,tDPGTer,tDPGCam,tDPTotal,tEst,tEq,tAdic,total,pEf,pTar,pTra,detCab,caPag,cmPag,dpPag,estPag}=sumPeriodo(dias);
+  const totPg=pEf+pTar+pTra;const cuadra=Math.round(totPg)===Math.round(total)&&total>0;
+  const col=v=>v>0?'#1E6B33':'#999';
+  let h=`<div class="card"><div style="font-size:11px;font-weight:700;color:#1F3A5F;margin-bottom:7px">📋 ${label}</div>
+    <div class="ci"><span>🏠 Cabañas <span style="font-size:9px;color:#8A6D3B">(por check-in)</span>${pagBadge(caPag)}</span><span style="font-weight:700;color:${col(tCa)}">${fmt(tCa)}</span></div>
+    <div class="ci"><span>⛺ Camping${pagBadge(cmPag)}</span><span style="font-weight:700;color:${col(tCm)}">${fmt(tCm)}</span></div>
+    <div class="ci"><span>🎫 Day Pass${tDPGTer>0||tDPGCam>0?` <span style="font-size:9px;color:#8A6D3B">(${tDPGTer>0?'Terraza Gest.:'+fmt(tDPGTer):''}${tDPGCam>0?' Camping Gest.:'+fmt(tDPGCam):''})</span>`:''} ${pagBadge(dpPag)}</span><span style="font-weight:700;color:${col(tDPTotal)}">${fmt(tDPTotal)}</span></div>
+    <div class="ci"><span>🛒 El Estanquillo${pagBadge(estPag)}</span><span style="font-weight:700;color:${col(tEst)}">${fmt(tEst)}</span></div>
+    <div class="ci"><span>🏕️ Equipo</span><span style="font-weight:700;color:${col(tEq)}">${fmt(tEq)}</span></div>
+    ${tAdic>0?`<div class="ci" style="background:#EAF7EE"><span>➕ Adicionales (Gestión)</span><span style="font-weight:700;color:#1E6B33">${fmt(tAdic)}</span></div>`:''}
+    <div class="ct"><span style="font-size:15px;font-weight:700">🏆 TOTAL</span><span style="font-size:22px;font-weight:700">${fmt(total)}</span></div></div>`;
+  if(detCab.length){
+    h+=`<div style="background:#FFF8E1;border:1px solid #F9A825;border-radius:6px;padding:9px;margin-bottom:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div style="font-size:10px;font-weight:700;color:#E65100">🔍 DETALLE DE CABAÑAS INCLUIDAS EN ESTE CORTE</div>
+      ${excludedCabs.size>0?`<button onclick="restaurarCabs()" style="background:#1E6B33;color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:9px;font-weight:700;cursor:pointer;font-family:Arial">↩ Restaurar todas (${excludedCabs.size})</button>`:''}
+    </div>`;
+    detCab.forEach(d=>{
+      h+=`<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:10px;padding:5px 0;border-bottom:1px solid #FFE082;align-items:center">
+        <span style="background:#1F3A5F;color:#fff;padding:1px 7px;border-radius:3px;font-weight:700">${d.nombre}</span>
+        <span><b>${d.huesped}</b></span>
+        <span>Check-in: <b>${d.checkin}</b></span>
+        <span style="color:#8A6D3B;font-size:9px">Guardado: ${d.guardadoEn}</span>
+        <span style="color:#1E6B33;font-weight:700">${fmt(d.monto)}</span>
+        <button onclick="excluirCab('${d.key}')" style="margin-left:auto;background:#F8C9C4;color:#9C1F12;border:1px solid #9C1F12;border-radius:4px;padding:2px 8px;font-size:9px;font-weight:700;cursor:pointer;font-family:Arial" title="Excluir esta entrada duplicada del corte">✕ Excluir</button>
+      </div>`;
+    });
+    h+=`<div style="font-size:9px;color:#8A6D3B;margin-top:5px;font-style:italic">Usa ✕ Excluir para quitar entradas duplicadas. El monto se descuenta del total automáticamente.</div>
+    </div>`;
+  }
+  h+=`<div style="background:#5C5F38;color:#fff;padding:6px 12px;font-weight:700;font-size:12px;border-radius:4px;margin-bottom:6px">💳 DESGLOSE POR FORMA DE PAGO <span style="font-size:9px;font-weight:400;opacity:.7">— automático, sin depósitos</span></div>
+  <div class="card"><div class="ci"><span>💵 Efectivo</span><span style="font-weight:700;font-size:14px;color:#1E6B33">${fmt(pEf)}</span></div><div class="ci"><span>💳 Tarjeta</span><span style="font-weight:700;font-size:14px;color:#1A4A7A">${fmt(pTar)}</span></div><div class="ci"><span>🏦 Transferencia</span><span style="font-weight:700;font-size:14px;color:#8A5A00">${fmt(pTra)}</span></div>
+  <div class="ci" style="background:${cuadra?'#EAF7EE':totPg>0?'#FFF3E0':'#f9f9f9'}"><span style="font-weight:700">Suma pagos</span><div style="text-align:right"><div style="font-weight:700;font-size:15px;color:${cuadra?'#1E6B33':totPg>0?'#E65100':'#999'}">${fmt(totPg)}</div><div style="font-size:9px;color:${cuadra?'#1E6B33':'#E65100'};font-weight:700">${cuadra?'✅ Cuadra con el total':totPg>0?'⚠️ Diferencia: '+fmt(Math.abs(total-totPg)):''}</div></div></div></div>`;
+  return h;
+}
+function buildK(){
+  if(!authCorte)return buildLockScreen('k','');
+  const fiH=el('fi')?.value||new Date().toISOString().slice(0,10);
+  return`<div style="background:#1F3A5F;color:#fff;padding:10px 14px;border-radius:6px;margin-bottom:10px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px">💰 CORTE DE CAJA</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <div><div style="font-size:9px;opacity:.7;margin-bottom:3px">📅 FECHA A CONSULTAR</div><input type="date" id="corte-fecha" value="${fiH}" style="background:#FCE6B0;border:2px solid #8A6D3B;border-radius:4px;padding:5px 10px;font-size:13px;font-weight:700;color:#8A5A00;font-family:Arial"/></div>
+      <div><div style="font-size:9px;opacity:.7;margin-bottom:3px">TIPO DE CORTE</div><div style="display:flex;gap:4px"><button id="btn-d" class="per-btn on" onclick="setTipo('d')">📅 Diario</button><button id="btn-s" class="per-btn" onclick="setTipo('s')">📆 Semanal</button><button id="btn-m" class="per-btn" onclick="setTipo('m')">🗓️ Mensual</button></div></div>
+      <div><div style="font-size:9px;opacity:.7;margin-bottom:3px">📋 FECHA DEL CORTE FÍSICO</div><input type="date" id="corte-real" value="${DD.fechaCorte||''}" onchange="DD.fechaCorte=this.value;dirty=true" style="background:#D5F5E3;border:2px solid #1E6B33;border-radius:4px;padding:5px 10px;font-size:12px;font-weight:700;color:#1E6B33;font-family:Arial"/></div>
+      <button onclick="generarCorte()" style="background:#8A6D3B;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-weight:700;font-size:12px;cursor:pointer;font-family:Arial">🔍 Ver corte</button>
+    </div>
+  </div>
+  <div id="corte-result">${renderCorte(fiH,'d')}</div>`;
+}
+
+// ══ RESUMEN ══
+function buildR(fechaVer){
+  if(!authCorte)return buildLockScreen('r',fechaVer);
+  const D=loadDay(fechaVer);
+  const dia=fechaVer?dnom(fechaVer)+' '+new Date(fechaVer+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}):'—';
+  let h=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap"><span style="font-size:11px;font-weight:700;color:#1F3A5F">📅 Ver resumen del día:</span><input type="date" value="${fechaVer}" style="background:#FCE6B0;border:2px solid #8A6D3B;border-radius:4px;padding:5px 10px;font-size:13px;font-weight:700;color:#8A5A00;font-family:Arial" onchange="el('main').innerHTML=buildR(this.value)"/><span style="font-size:12px;font-weight:700;color:#1A5276">${dia}</span></div>`;
+  if(!D)return h+`<div style="text-align:center;padding:40px;background:#fff;border-radius:8px;border:2px dashed #ccc;color:#777"><div style="font-size:36px;margin-bottom:8px">📭</div>No hay datos para esta fecha.</div>`;
+  const per=D.personal||{};
+  if(per.montse||per.raul||per.mayra)h+=`<div style="background:#1F3A5F;color:#fff;padding:6px 12px;border-radius:4px;margin-bottom:8px;font-size:11px">👤 ${[per.montse&&'Barreto: '+per.montse,per.raul&&'Raúl: '+per.raul,per.brenda&&'Brenda: '+per.brenda,per.lety&&'Lety: '+per.lety,per.mayra&&'Mayra: '+per.mayra].filter(Boolean).join(' · ')}</div>`;
+  const res=(D.reservas||[]).filter(r=>r.nombre||r.servicio);
+  h+=sh('👥','Gestión de Reservas','#5A1A8A',res.length+' registro(s)');
+  if(!res.length)h+='<div class="card"><span style="color:#777;font-size:11px;font-style:italic">Sin registros.</span></div>';
+  else res.forEach((r,i)=>{h+=`<div class="card ${i%2?'':'a'}" style="padding:8px 12px"><div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center"><span style="background:#5A1A8A;color:#fff;font-size:10px;font-weight:900;padding:1px 8px;border-radius:10px">RES #${i+1}</span><span style="font-size:12px;font-weight:700;color:#1F3A5F">${r.nombre||'(sin nombre)'}</span>${r.personas?`<span style="font-size:9px;color:#777">${r.personas}p</span>`:''} ${r.servicio?`<span style="background:#FCE6B0;color:#8A5A00;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px">${r.servicio}</span>`:''} ${r.canal?`<span style="background:#E8D5F5;color:#5A1A8A;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px">${r.canal}</span>`:''} ${r.precioDesc?`<span style="font-size:10px;font-weight:700;color:#1E6B33">${fmt(parseFloat(r.precioDesc))}</span>`:r.precioNormal?`<span style="font-size:10px;font-weight:700;color:#8A6D3B">${fmt(parseFloat(r.precioNormal))}</span>`:''}${r.adicionales&&r.adicionales!=='Ninguno'&&n(r.costoAdic)>0?`<span style="background:#C9E3C6;color:#1E6B33;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px">➕ ${r.adicionales}: ${fmt(n(r.costoAdic))}</span>`:''}</div><div style="font-size:9px;color:#555;margin-top:3px;display:flex;gap:10px;flex-wrap:wrap">${r.fechaReserva?`<span>📌 ${r.fechaReserva}</span>`:''} ${r.checkinGest?`<span>🏠 In: ${r.checkinGest}</span>`:''} ${r.checkoutGest?`<span>🚪 Out: ${r.checkoutGest}</span>`:''} ${r.depRecibido?`<span>💰${fmt(n(r.depRecibido))}</span>`:''}</div></div>`;});
+  const cabA=(D.cabanas||[]).filter(c=>c.huesped);
+  h+=sh('🏠','Cabañas','#1F3A5F',cabA.length+' con huésped');
+  if(!cabA.length)h+='<div class="card"><span style="color:#777;font-size:11px;font-style:italic">Todas libres.</span></div>';
+  else{h+='<div style="overflow-x:auto"><table class="tbl"><tr><th>Cabaña</th><th>Huésped</th><th>Estado</th><th>Check-in</th><th>Noches</th><th>Corte</th><th>¿Dev?</th><th>¿Reseña?</th></tr>';cabA.forEach(c=>{const t=calcCabCorteD(c,D.reservas||[]);h+=`<tr><td><b>${c.nombre}</b></td><td>${c.huesped}</td><td>${c.estado}</td><td>${c.checkin||'—'}</td><td style="text-align:center">${c.noches}</td><td style="font-weight:700;color:#1E6B33">${t>0?fmt(t):''}</td><td>${c.devolverDep||'—'}</td><td>${c.pedirResena||'—'}</td></tr>`;});h+='</table></div>';}
+  const campA=(D.camping||[]).filter(c=>c.huesped);
+  h+=sh('⛺','Camping','#5C5F38',campA.length+' zona(s)');
+  if(!campA.length)h+='<div class="card"><span style="color:#777;font-size:11px;font-style:italic">Sin grupos.</span></div>';
+  else{h+='<div style="overflow-x:auto"><table class="tbl"><tr><th>Zona</th><th>Huésped</th><th>Grupo</th><th>Ad</th><th>Ni</th><th>Noches</th><th>Total</th></tr>';(D.camping||[]).forEach((c,i)=>{if(!c.huesped)return;h+=`<tr><td><b>Z${i+1}</b></td><td>${c.huesped}</td><td>${c.grupoRes||'—'}</td><td style="text-align:center">${c.adultos||0}</td><td style="text-align:center">${c.ninos||0}</td><td style="text-align:center">${c.noches||0}</td><td style="font-weight:700;color:#1E6B33">${calcCampTot(c)>0?fmt(calcCampTot(c)):''}</td></tr>`;});h+='</table></div>';}
+  const r2=sumPeriodo([fechaVer]||[]);
+  h+=sh('💰','Corte de Caja','#1F3A5F');
+  h+=`<div class="card">${[['🏠 Cabañas (por check-in)',r2.tCa],['⛺ Camping',r2.tCm],['🎫 Day Pass',r2.tDPTotal],['🛒 El Estanquillo',r2.tEst],['🏕️ Equipo',r2.tEq]].map(([l,v])=>`<div class="ci"><span>${l}</span><span style="font-weight:700;color:${v>0?'#1E6B33':'#999'}">${fmt(v)}</span></div>`).join('')}${r2.tAdic>0?`<div class="ci" style="background:#EAF7EE"><span>➕ Adicionales (Gestión)</span><span style="font-weight:700;color:#1E6B33">${fmt(r2.tAdic)}</span></div>`:''}<div class="ct"><span style="font-size:14px;font-weight:700">🏆 TOTAL</span><span style="font-size:20px;font-weight:700">${fmt(r2.total)}</span></div></div>`;
+  if(r2.pEf||r2.pTar||r2.pTra)h+=`<div class="card" style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px">${r2.pEf?`<span>💵 Ef: <b style="color:#1E6B33">${fmt(r2.pEf)}</b></span>`:''}${r2.pTar?`<span>💳 Tar: <b style="color:#1A4A7A">${fmt(r2.pTar)}</b></span>`:''}${r2.pTra?`<span>🏦 Tr: <b style="color:#8A5A00">${fmt(r2.pTra)}</b></span>`:''}</div>`;
+  return h;
+}
+
+// ══ CALCULAR TOTALES EN TIEMPO REAL ══
+function calcT(){
+  DD.cabanas.forEach((c,i)=>{const e=el('csub'+i);if(e)e.textContent=fmt(calcCabCorte(c));});
+  DD.camping.forEach((c,i)=>{const e=el('mcs'+i);if(e)e.textContent=fmt(calcCampTot(c));});
+  normEst(DD.tiendita).forEach((e,i)=>{const el2=el('tsub'+i)||el('t sub'+i);/* handled in buildEstSec */});
+  const tT=totEst(DD.tiendita),tM=totEst(DD.cafe);
+  const ee=el('test');if(ee)ee.textContent='TOTAL EL ESTANQUILLO: '+fmt(tT+tM);
+  const tCa=DD.cabanas.reduce((s,c)=>s+calcCabCorte(c),0);
+  const tCm=DD.camping.reduce((s,c)=>s+calcCampTot(c),0);
+  const tDP=calcDpTot(DD.dpTerAdultos,DD.dpTerNinos,DD.dpTerPrecioAdulto,DD.dpTerPrecioNino)+calcDpTot(DD.dpCamAdultos,DD.dpCamNinos,DD.dpCamPrecioAdulto,DD.dpCamPrecioNino);
+  ['tca','tcamp','tdp'].forEach((id,idx)=>{const e=el(id);if(e)e.textContent=['TOTAL CABAÑAS: '+fmt(tCa),'TOTAL CAMPING: '+fmt(tCm),'TOTAL DAY PASS: '+fmt(tDP)][idx];});
+}
+
+// ══ EXCEL ══
+function exportarExcel(){
+  const fi=el('fi')?.value||new Date().toISOString().slice(0,10);
+  if(!window.XLSX){alert('Cargando librería Excel, intenta de nuevo...');return;}
+  const wb=XLSX.utils.book_new();
+  const hR=[['Fecha Reg.','RES#','Nombre','Servicio','Personas','F.Reserva','Check-in','Check-out','Canal','Registró','Liquidado','GCal','P.Normal','P.Desc.','Adicionales','C.Adic.','Dep.Rec.','Dep.Dev.','Forma Pago','Ef.Mixto','Tar.Mixto','Tr.Mixto','Comentarios','Equipo Camping','Total Equipo']];
+  DD.reservas.forEach((r,i)=>{if(!r.nombre&&!r.servicio)return;const eqD=EQUIPO_CAT.filter(item=>(r.equipoGest||{})[item.id]).map(item=>{const qty=parseInt((r.equipoGestCants||{})[item.id])||1;return item.l+(qty>1?' x'+qty:'');}).join(' | ');hR.push([fi,i+1,r.nombre,r.servicio,n(r.personas),r.fechaReserva,r.checkinGest,r.checkoutGest,r.canal,r.registradoPor,r.liquidado,r.googleCal,n(r.precioNormal),n(r.precioDesc),r.adicionales,n(r.costoAdic),n(r.depRecibido),n(r.depDevuelto),r.formaPago,n(r.mEfectivo),n(r.mTarjeta),n(r.mTransferencia),r.comentarios,eqD,calcEqGestTot(r)]);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(hR),'📋 Reservas');
+  const hC=[['Fecha','Cabaña','Huésped','Estado','Check-in','Check-out','Noches','Corte','F.Pago','¿Dev.Dep?','¿Reseña?','¿Fideliz?']];
+  DD.cabanas.forEach(c=>{if(!c.huesped)return;hC.push([fi,c.nombre,c.huesped,c.estado,c.checkin,c.checkout,n(c.noches),calcCabCorte(c),c.formaPago,c.devolverDep,c.pedirResena,c.enFidelizacion]);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(hC),'🏠 Cabañas');
+  const hCamp=[['Fecha','Zona','Huésped','Grupo','Adultos','Niños','Noches','$/Ad','$/Ni','Total','F.Pago']];
+  DD.camping.forEach((c,i)=>{if(!c.huesped)return;const pA=n(c.precioAdulto)||n(c.precio);const pN=n(c.precioNino)||n(c.precio);hCamp.push([fi,'Z'+(i+1),c.huesped,c.grupoRes,n(c.adultos),n(c.ninos),n(c.noches),pA,pN,calcCampTot(c),c.formaPago]);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(hCamp),'⛺ Camping');
+  const dp1=calcDpTot(DD.dpTerAdultos,DD.dpTerNinos,DD.dpTerPrecioAdulto,DD.dpTerPrecioNino);
+  const dp2=calcDpTot(DD.dpCamAdultos,DD.dpCamNinos,DD.dpCamPrecioAdulto,DD.dpCamPrecioNino);
+  const hDP=[['Fecha','Modalidad','Adultos','Niños','$/Ad','$/Ni','Total','F.Pago']];
+  if(n(DD.dpTerAdultos)||n(DD.dpTerNinos))hDP.push([fi,'Terraza',n(DD.dpTerAdultos),n(DD.dpTerNinos),n(DD.dpTerPrecioAdulto),n(DD.dpTerPrecioNino),dp1,DD.dpTerPago]);
+  if(n(DD.dpCamAdultos)||n(DD.dpCamNinos))hDP.push([fi,'Camping',n(DD.dpCamAdultos),n(DD.dpCamNinos),n(DD.dpCamPrecioAdulto),n(DD.dpCamPrecioNino),dp2,DD.dpCamPago]);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(hDP),'🎫 Day Pass');
+  const hE=[['Fecha','Sección','Monto','F.Pago'],['','Fecha corte',DD.fechaCorteEst,'']];
+  normEst(DD.tiendita).forEach(e=>{if(!n(e.m))return;hE.push([fi,'Tiendita',n(e.m),e.fp]);});
+  normEst(DD.cafe).forEach(e=>{if(!n(e.m))return;hE.push([fi,'Mamachuy',n(e.m),e.fp]);});
+  hE.push([fi,'TOTAL',totEst(DD.tiendita)+totEst(DD.cafe),'']);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(hE),'🛒 El Estanquillo');
+  const hEq=[['Fecha','Huésped','Artículos','C.Renta','Depósito','Devolución']];
+  DD.equipo.forEach(e=>{if(!e.huesped)return;const arts=Object.entries(e.items||{}).filter(([,v])=>v).map(([k])=>EQL.find(x=>x.id===k)?.l||k).join(' | ');hEq.push([fi,e.huesped,arts,n(e.costoTotal),n(e.deposito),e.devuelto]);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(hEq),'🏕️ Equipo');
+  const hInc=[['F.Incidencia','F.Registro','Hora','Área','Reportó','Descripción','Acción','¿Resuelto?','Responsable']];
+  DD.incidencias.forEach(inc=>{if(!inc.desc&&!inc.area)return;hInc.push([inc.fecha,fi,inc.hora,inc.area,inc.reportadoPor,inc.desc,inc.accion,inc.resuelto,inc.responsable]);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(hInc),'⚠️ Incidencias');
+  const r2=sumPeriodo([fi]);
+  const hK=[['CORTE',''],['Fecha consulta',fi],['Fecha corte físico',DD.fechaCorte||''],['Día',dnom(fi)],['',''],['CONCEPTO','MONTO'],['Cabañas (por check-in)',r2.tCa],['Camping',r2.tCm],['Day Pass',r2.tDP],['El Estanquillo',r2.tEst],['Equipo',r2.tEq],['',''],['TOTAL',r2.total],['',''],['F.PAGO','MONTO'],['Efectivo',r2.pEf],['Tarjeta',r2.pTar],['Transferencia',r2.pTra],['',''],['SUMA PAGOS',r2.pEf+r2.pTar+r2.pTra],['¿CUADRA?',Math.round(r2.pEf+r2.pTar+r2.pTra)===Math.round(r2.total)?'SÍ ✓':'REVISAR']];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(hK),'💰 Corte de Caja');
+  XLSX.writeFile(wb,'QuintaMajam_'+fi+'.xlsx');
+  st(true,'📊 Excel exportado · '+fi);
+}
+
+// ══ INIT ══
+window.onload=async function(){
+  const hoy=new Date().toISOString().slice(0,10);
+  el('fi').value=hoy;lastF=hoy;
+  el('dn').textContent=dnom(hoy);el('dm').textContent=dmes(hoy);
+  st(false,'⏳ Conectando con la nube...');
+  // Sincronizar índice de fechas desde Supabase
+  await getAllKeysSupa();
+  // Cargar datos de hoy desde Supabase
+  await cargarSupa(hoy);
+  const ok=cargar(hoy);llenarPersonal();render('g');
+  st(ok,ok?'✓ Datos cargados desde la nube · '+dnom(hoy)+' '+hoy:'Día nuevo · '+dnom(hoy)+' '+hoy);dirty=false;
+  setInterval(()=>{if(dirty){const fi=el('fi')?.value;if(fi)guardar(fi);}},30000);
+};
+</script>
+</body>
+</html>
